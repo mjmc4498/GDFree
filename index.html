@@ -47,19 +47,19 @@
 <aside class="sidebar">
   <input id="menuSearch" class="form-control mb-3" placeholder="Buscar módulo...">
   <div id="menu" class="list-group list-group-flush">
-    <a href="#glossary" class="list-group-item list-group-item-action bg-transparent text-light" data-section="glossary"><i class="bi bi-journal-text me-2"></i>Business Glossary</a>
-    <a href="#catalog" class="list-group-item list-group-item-action bg-transparent text-light" data-section="catalog"><i class="bi bi-collection me-2"></i>Data Catalog</a>
-    <a href="#quality" class="list-group-item list-group-item-action bg-transparent text-light" data-section="quality"><i class="bi bi-clipboard2-data me-2"></i>Quality Dashboard</a>
-    <a href="#policies" class="list-group-item list-group-item-action bg-transparent text-light" data-section="policies"><i class="bi bi-file-earmark-text me-2"></i>Políticas & Estándares</a>
+    <a href="#glossary" class="list-group-item list-group-item-action bg-transparent text-light" data-section="glossary"><i class="bi bi-journal-text me-2"></i>Glosario de Negocio</a>
+    <a href="#catalog" class="list-group-item list-group-item-action bg-transparent text-light" data-section="catalog"><i class="bi bi-collection me-2"></i>Catálogo de Datos</a>
+    <a href="#quality" class="list-group-item list-group-item-action bg-transparent text-light" data-section="quality"><i class="bi bi-clipboard2-data me-2"></i>Panel de Calidad</a>
+    <a href="#policies" class="list-group-item list-group-item-action bg-transparent text-light" data-section="policies"><i class="bi bi-file-earmark-text me-2"></i>Políticas y Estándares</a>
     <a href="#raci" class="list-group-item list-group-item-action bg-transparent text-light" data-section="raci"><i class="bi bi-grid-1x2 me-2"></i>Matriz RACI</a>
     <a href="#access" class="list-group-item list-group-item-action bg-transparent text-light" data-section="access"><i class="bi bi-key me-2"></i>Acceso a Datos</a>
     <a href="#dpia" class="list-group-item list-group-item-action bg-transparent text-light" data-section="dpia"><i class="bi bi-shield-lock me-2"></i>DPIA</a>
-    <a href="#retention" class="list-group-item list-group-item-action bg-transparent text-light" data-section="retention"><i class="bi bi-calendar3 me-2"></i>Retención</a>
+    <a href="#retention" class="list-group-item list-group-item-action bg-transparent text-light" data-section="retention"><i class="bi bi-calendar3 me-2"></i>Retención y Disposición</a>
     <a href="#kanban" class="list-group-item list-group-item-action bg-transparent text-light" data-section="kanban"><i class="bi bi-columns-gap me-2"></i>Incidencias</a>
-    <a href="#contracts" class="list-group-item list-group-item-action bg-transparent text-light" data-section="contracts"><i class="bi bi-braces-asterisk me-2"></i>Data Contracts</a>
+    <a href="#contracts" class="list-group-item list-group-item-action bg-transparent text-light" data-section="contracts"><i class="bi bi-braces-asterisk me-2"></i>Contratos de Datos</a>
     <a href="#domains" class="list-group-item list-group-item-action bg-transparent text-light" data-section="domains"><i class="bi bi-diagram-3-center me-2"></i>Mapa de Dominios</a>
     <a href="#training" class="list-group-item list-group-item-action bg-transparent text-light" data-section="training"><i class="bi bi-mortarboard me-2"></i>Entrenamiento</a>
-    <a href="#sharing" class="list-group-item list-group-item-action bg-transparent text-light" data-section="sharing"><i class="bi bi-people me-2"></i>Data Sharing</a>
+    <a href="#sharing" class="list-group-item list-group-item-action bg-transparent text-light" data-section="sharing"><i class="bi bi-people me-2"></i>Acuerdos de Datos</a>
     <a href="#settings" class="list-group-item list-group-item-action bg-transparent text-light" data-section="settings"><i class="bi bi-gear me-2"></i>Ajustes</a>
   </div>
 </aside>
@@ -68,12 +68,12 @@
     <!-- SECTION: GLOSSARY -->
     <section id="glossary" class="section">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="m-0"><i class="bi bi-journal-text me-2"></i>Business Glossary</h4>
+    <h4 class="m-0"><i class="bi bi-journal-text me-2"></i>Glosario de Negocio</h4>
         <div>
-          <button id="g_export_csv" class="btn btn-sm btn-outline-light"><i class="bi bi-filetype-csv"></i> CSV</button>
-          <button id="g_export_json" class="btn btn-sm btn-outline-light"><i class="bi bi-filetype-json"></i> JSON</button>
+      <button id="g_export_csv" class="btn btn-sm btn-outline-light"><i class="bi bi-filetype-csv"></i> Exportar CSV</button>
+      <button id="g_export_json" class="btn btn-sm btn-outline-light"><i class="bi bi-filetype-json"></i> Exportar JSON</button>
           <label class="btn btn-sm btn-outline-light mb-0"><i class="bi bi-upload"></i> Importar<input type="file" id="g_import" class="d-none" accept="application/json"></label>
-          <button id="g_new" class="btn btn-sm btn-primary" data-bs-toggle="offcanvas" data-bs-target="#ocGlossary"><i class="bi bi-plus-lg"></i> Nuevo</button>
+      <button id="g_new" class="btn btn-sm btn-primary" data-bs-toggle="offcanvas" data-bs-target="#ocGlossary"><i class="bi bi-plus-lg"></i> Nuevo Término</button>
         </div>
       </div>
       <div class="card mb-3"><div class="card-body">
@@ -81,7 +81,7 @@
           <div class="col-md-4"><input id="g_q" class="form-control" placeholder="Buscar término, definición, dueño…"></div>
           <div class="col-md-3"><select id="g_domain_filter" class="form-select"><option value="">Todos los dominios</option></select></div>
           <div class="col-md-3"><select id="g_sens_filter" class="form-select"><option value="">Todas las sensibilidades</option><option>Público</option><option>Interno</option><option>Confidencial</option><option>Alto Secreto</option></select></div>
-          <div class="col-md-2"><select id="g_status_filter" class="form-select"><option value="">Todos</option><option>Vigente</option><option>Borrador</option><option>Obsoleto</option></select></div>
+      <div class="col-md-2"><select id="g_status_filter" class="form-select"><option value="">Todos los estados</option><option>Vigente</option><option>Borrador</option><option>Obsoleto</option></select></div>
         </div>
       </div></div>
       <div class="card"><div class="card-body table-responsive">
@@ -95,7 +95,7 @@
     <!-- SECTION: CATALOG -->
     <section id="catalog" class="section">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="m-0"><i class="bi bi-collection me-2"></i>Data Catalog</h4>
+    <h4 class="m-0"><i class="bi bi-collection me-2"></i>Catálogo de Datos</h4>
         <div>
           <button id="c_new" class="btn btn-sm btn-primary" data-bs-toggle="offcanvas" data-bs-target="#ocDataset"><i class="bi bi-plus-lg"></i> Nuevo Dataset</button>
         </div>
@@ -105,7 +105,7 @@
           <div class="col-md-4"><input id="c_q" class="form-control" placeholder="Buscar dataset, columna…"></div>
           <div class="col-md-3"><select id="c_domain_filter" class="form-select"><option value="">Todos los dominios</option></select></div>
           <div class="col-md-3"><select id="c_sens_filter" class="form-select"><option value="">Todas las sensibilidades</option><option>Público</option><option>Interno</option><option>Confidencial</option><option>Alto Secreto</option></select></div>
-          <div class="col-md-2"><select id="c_pii_filter" class="form-select"><option value="">Tipo</option><option value="pii">Solo PII</option><option value="npii">Sin PII</option></select></div>
+      <div class="col-md-2"><select id="c_pii_filter" class="form-select"><option value="">Tipo de dato</option><option value="pii">Solo PII</option><option value="npii">Sin PII</option></select></div>
         </div>
       </div></div>
       <div id="c_grid" class="row g-3"></div>
@@ -114,17 +114,17 @@
     <!-- SECTION: QUALITY -->
     <section id="quality" class="section">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="m-0"><i class="bi bi-clipboard2-data me-2"></i>Quality Dashboard</h4>
+    <h4 class="m-0"><i class="bi bi-clipboard2-data me-2"></i>Panel de Calidad</h4>
         <button id="q_new" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#mdlBuilder"><i class="bi bi-plus-lg"></i> Nueva Regla</button>
       </div>
        <div class="row g-3 mb-3">
-        <div class="col-md-4"><div class="card p-3"><div class="text-secondary small">Reglas</div><div class="h3" id="q_kpi_rules">0</div></div></div>
-        <div class="col-md-4"><div class="card p-3"><div class="text-secondary small">% Aprobación (7d)</div><div class="h3" id="q_kpi_pass">0%</div></div></div>
-        <div class="col-md-4"><div class="card p-3"><div class="text-secondary small">Incidencias abiertas</div><div class="h3" id="q_kpi_inc">0</div></div></div>
+    <div class="col-md-4"><div class="card p-3"><div class="text-secondary small">Reglas de Calidad</div><div class="h3" id="q_kpi_rules">0</div></div></div>
+    <div class="col-md-4"><div class="card p-3"><div class="text-secondary small">% Aprobación (últimos 7d)</div><div class="h3" id="q_kpi_pass">0%</div></div></div>
+    <div class="col-md-4"><div class="card p-3"><div class="text-secondary small">Incidencias Abiertas</div><div class="h3" id="q_kpi_inc">0</div></div></div>
       </div>
       <div class="card"><div class="card-body table-responsive">
         <table class="table align-middle" id="q_tbl">
-          <thead><tr><th>Regla</th><th>Dominio</th><th>Dataset</th><th>Campo</th><th>Severidad</th><th>Estado</th><th>Última corrida</th><th>Resultado</th><th>Fallos</th><th class="text-end">Acciones</th></tr></thead>
+      <thead><tr><th>Regla</th><th>Dominio</th><th>Dataset</th><th>Campo</th><th>Severidad</th><th>Estado</th><th>Última Corrida</th><th>Resultado</th><th>Fallos</th><th class="text-end">Acciones</th></tr></thead>
           <tbody></tbody>
         </table>
       </div></div>
@@ -133,24 +133,24 @@
     <!-- SECTION: POLICIES -->
     <section id="policies" class="section">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="m-0"><i class="bi bi-file-earmark-text me-2"></i>Políticas & Estándares</h4>
-        <button id="p_new" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Nueva</button>
+    <h4 class="m-0"><i class="bi bi-file-earmark-text me-2"></i>Políticas y Estándares</h4>
+    <button id="p_new" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Nueva Política</button>
       </div>
       <div class="row g-3">
         <div class="col-md-4">
           <div class="card"><div class="card-body">
-            <input id="p_q" class="form-control mb-2" placeholder="Buscar...">
+        <input id="p_q" class="form-control mb-2" placeholder="Buscar política...">
             <div id="p_list" class="list-group"></div>
           </div></div>
         </div>
         <div class="col-md-8">
           <div class="card"><div class="card-body">
-            <h5 id="p_title">Selecciona una política</h5>
+        <h5 id="p_title">Seleccione una política</h5>
             <div class="small text-secondary" id="p_meta"></div>
             <hr/>
             <div id="p_content" style="min-height:200px"></div>
             <hr/>
-            <h6>Changelog</h6>
+        <h6>Historial de Cambios</h6>
             <pre id="p_diff" class="mb-0"></pre>
           </div></div>
         </div>
@@ -161,11 +161,14 @@
     <section id="raci" class="section">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="m-0"><i class="bi bi-grid-1x2 me-2"></i>Matriz RACI</h4>
-        <button id="raci_export" class="btn btn-sm btn-outline-light"><i class="bi bi-filetype-csv"></i> Exportar CSV</button>
+    <div>
+      <button id="r_new" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Nueva Fila</button>
+      <button id="raci_export" class="btn btn-sm btn-outline-light"><i class="bi bi-filetype-csv"></i> Exportar CSV</button>
+    </div>
       </div>
       <div class="card"><div class="card-body table-responsive">
         <table class="table align-middle" id="raci_tbl">
-          <thead><tr><th>Proceso</th><th>Artefacto</th><th>R</th><th>A</th><th>C</th><th>I</th></tr></thead>
+      <thead><tr><th>Proceso</th><th>Artefacto</th><th>Responsable (R)</th><th>Aprobador (A)</th><th>Consultado (C)</th><th>Informado (I)</th><th class="text-end">Acciones</th></tr></thead>
           <tbody></tbody>
         </table>
       </div></div>
@@ -175,7 +178,7 @@
     <section id="access" class="section">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="m-0"><i class="bi bi-key me-2"></i>Solicitudes de Acceso</h4>
-        <button id="a_new" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Nueva</button>
+    <button id="a_new" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Nueva Solicitud</button>
       </div>
       <div class="row g-3">
         <div class="col-md-4">
@@ -187,7 +190,7 @@
           <div class="card"><div class="card-body">
             <div class="table-responsive">
               <table class="table align-middle" id="a_tbl">
-                <thead><tr><th>ID</th><th>Solicitante</th><th>Recurso</th><th>Estado</th><th>SLA</th><th class="text-end">Acciones</th></tr></thead>
+            <thead><tr><th>ID</th><th>Solicitante</th><th>Recurso</th><th>Estado</th><th>Vence en</th><th class="text-end">Acciones</th></tr></thead>
                 <tbody></tbody>
               </table>
             </div>
@@ -200,7 +203,7 @@
     <section id="dpia" class="section">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="m-0"><i class="bi bi-shield-lock me-2"></i>DPIA – Evaluación de Impacto</h4>
-        <button id="dp_new" class="btn btn-sm btn-outline-light"><i class="bi bi-arrow-repeat"></i> Reset</button>
+    <button id="dp_new" class="btn btn-sm btn-outline-light"><i class="bi bi-arrow-repeat"></i> Reiniciar</button>
       </div>
       <div class="card"><div class="card-body">
         <div class="row g-3">
@@ -209,7 +212,7 @@
           </div>
           <div class="col-md-4">
             <div class="card"><div class="card-body">
-              <div class="text-secondary small">Riesgo</div>
+          <div class="text-secondary small">Nivel de Riesgo</div>
               <div class="display-6" id="dp_score">0</div>
               <div id="dp_badge"></div>
             </div></div>
@@ -221,8 +224,8 @@
     <!-- SECTION: RETENTION -->
     <section id="retention" class="section">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="m-0"><i class="bi bi-calendar3 me-2"></i>Retención & Disposición</h4>
-        <button id="rt_new" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Nuevo registro</button>
+    <h4 class="m-0"><i class="bi bi-calendar3 me-2"></i>Retención y Disposición</h4>
+    <button id="rt_new" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Nuevo Registro</button>
       </div>
       <div class="row g-3">
         <div class="col-md-5">
@@ -244,20 +247,20 @@
     <section id="kanban" class="section">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="m-0"><i class="bi bi-columns-gap me-2"></i>Incidencias de Datos</h4>
-        <button id="k_new" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Nueva incidencia</button>
+    <button id="k_new" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Nueva Incidencia</button>
       </div>
       <div class="kanban">
-        <div class="kanban-col" id="k_backlog" data-col="Backlog"><h6>Backlog <span class="badge text-bg-secondary" id="k_b_count">0</span></h6></div>
+    <div class="kanban-col" id="k_backlog" data-col="Backlog"><h6>Pendiente <span class="badge text-bg-secondary" id="k_b_count">0</span></h6></div>
         <div class="kanban-col" id="k_progress" data-col="En Progreso"><h6>En Progreso <span class="badge text-bg-info" id="k_p_count">0</span></h6></div>
         <div class="kanban-col" id="k_review" data-col="En Revisión"><h6>En Revisión <span class="badge text-bg-warning" id="k_r_count">0</span></h6></div>
-        <div class="kanban-col" id="k_done" data-col="Hecho"><h6>Hecho <span class="badge text-bg-success" id="k_d_count">0</span></h6></div>
+    <div class="kanban-col" id="k_done" data-col="Hecho"><h6>Finalizado <span class="badge text-bg-success" id="k_d_count">0</span></h6></div>
       </div>
     </section>
 
     <!-- SECTION: CONTRACTS -->
     <section id="contracts" class="section">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="m-0"><i class="bi bi-braces-asterisk me-2"></i>Data Contracts</h4>
+    <h4 class="m-0"><i class="bi bi-braces-asterisk me-2"></i>Contratos de Datos</h4>
         <button id="ct_validate" class="btn btn-sm btn-outline-light"><i class="bi bi-check2-circle"></i> Validar</button>
       </div>
       <div class="row g-3">
@@ -279,8 +282,8 @@
     <!-- SECTION: DOMAINS MAP -->
     <section id="domains" class="section">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="m-0"><i class="bi bi-diagram-3-center me-2"></i>Mapa de Dominios & Productos</h4>
-        <button id="dm_refresh" class="btn btn-sm btn-outline-light"><i class="bi bi-arrow-repeat"></i> Refresh</button>
+    <h4 class="m-0"><i class="bi bi-diagram-3-center me-2"></i>Mapa de Dominios y Productos</h4>
+    <button id="dm_refresh" class="btn btn-sm btn-outline-light"><i class="bi bi-arrow-repeat"></i> Actualizar</button>
       </div>
       <div class="row g-3" id="dm_grid"></div>
     </section>
@@ -288,7 +291,7 @@
     <!-- SECTION: TRAINING -->
     <section id="training" class="section">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="m-0"><i class="bi bi-mortarboard me-2"></i>Entrenamiento & Certificación</h4>
+    <h4 class="m-0"><i class="bi bi-mortarboard me-2"></i>Entrenamiento y Certificación</h4>
         <button id="tr_start" class="btn btn-sm btn-outline-light"><i class="bi bi-play-circle"></i> Empezar Quiz</button>
       </div>
       <div class="row g-3">
@@ -304,8 +307,8 @@
     <!-- SECTION: SHARING -->
     <section id="sharing" class="section">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="m-0"><i class="bi bi-people me-2"></i>Data Sharing Agreements</h4>
-        <button id="sh_new" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Nuevo acuerdo</button>
+    <h4 class="m-0"><i class="bi bi-people me-2"></i>Acuerdos de Intercambio</h4>
+    <button id="sh_new" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Nuevo Acuerdo</button>
       </div>
       <div class="card"><div class="card-body">
         <div class="table-responsive">
@@ -317,24 +320,24 @@
     <!-- SECTION: SETTINGS -->
     <section id="settings" class="section">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="m-0"><i class="bi bi-gear me-2"></i>Ajustes / Mock API / I18N</h4>
+    <h4 class="m-0"><i class="bi bi-gear me-2"></i>Ajustes</h4>
       </div>
       <div class="card"><div class="card-body">
         <div class="row g-3">
           <div class="col-md-4">
             <div class="form-check form-switch">
               <input class="form-check-input" type="checkbox" id="s_mock" checked>
-              <label class="form-check-label" for="s_mock">Mock API activado</label>
+          <label class="form-check-label" for="s_mock">API Mock activado</label>
             </div>
           </div>
           <div class="col-md-4">
             <select id="s_lang" class="form-select" style="max-width:220px">
               <option value="es">Español</option>
-              <option value="en">English</option>
+          <option value="en">Inglés</option>
             </select>
           </div>
           <div class="col-md-4">
-            <button id="s_clear" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Limpiar LocalStorage</button>
+        <button id="s_clear" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Limpiar Almacenamiento Local</button>
           </div>
         </div>
       </div></div>
@@ -345,7 +348,7 @@
 <!-- Offcanvas: Glossary Editor -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="ocGlossary">
   <div class="offcanvas-header">
-    <h5 class="offcanvas-title"><i class="bi bi-pencil-square me-2"></i>Término</h5>
+    <h5 class="offcanvas-title"><i class="bi bi-pencil-square me-2"></i>Editor de Término</h5>
     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
   </div>
   <div class="offcanvas-body">
@@ -354,24 +357,24 @@
       <div class="mb-2">
         <label class="form-label">Término</label>
         <input id="g_name" class="form-control" required maxlength="80">
-        <div class="invalid-feedback">Obligatorio</div>
+        <div class="invalid-feedback">Este campo es obligatorio.</div>
       </div>
       <div class="mb-2">
         <label class="form-label">Definición</label>
         <textarea id="g_def" class="form-control" rows="4" required maxlength="500"></textarea>
-        <div class="invalid-feedback">Obligatorio</div>
+        <div class="invalid-feedback">Este campo es obligatorio.</div>
       </div>
       <div class="row g-2">
         <div class="col-md-6">
           <label class="form-label">Dominio</label>
           <input id="g_dom" class="form-control" list="g_dlDomains" required>
           <datalist id="g_dlDomains"></datalist>
-          <div class="invalid-feedback">Obligatorio</div>
+          <div class="invalid-feedback">Este campo es obligatorio.</div>
         </div>
         <div class="col-md-6">
           <label class="form-label">Dueño</label>
           <input id="g_owner" class="form-control" required>
-          <div class="invalid-feedback">Obligatorio</div>
+          <div class="invalid-feedback">Este campo es obligatorio.</div>
         </div>
         <div class="col-md-6">
           <label class="form-label">Sensibilidad</label>
@@ -379,14 +382,14 @@
             <option>Público</option><option>Interno</option>
             <option>Confidencial</option><option>Alto Secreto</option>
           </select>
-          <div class="invalid-feedback">Obligatorio</div>
+          <div class="invalid-feedback">Este campo es obligatorio.</div>
         </div>
         <div class="col-md-6">
           <label class="form-label">Estado</label>
           <select id="g_status_sel" class="form-select" required>
             <option>Vigente</option><option>Borrador</option><option>Obsoleto</option>
           </select>
-          <div class="invalid-feedback">Obligatorio</div>
+          <div class="invalid-feedback">Este campo es obligatorio.</div>
         </div>
       </div>
       <div class="d-flex gap-2 mt-3">
@@ -400,7 +403,7 @@
 <!-- Offcanvas: Dataset Editor -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="ocDataset">
   <div class="offcanvas-header">
-    <h5 class="offcanvas-title"><i class="bi bi-database-gear me-2"></i>Dataset</h5>
+    <h5 class="offcanvas-title"><i class="bi bi-database-gear me-2"></i>Editor de Dataset</h5>
     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
   </div>
   <div class="offcanvas-body">
@@ -409,14 +412,14 @@
       <div class="mb-2">
         <label class="form-label">Nombre</label>
         <input id="c_name" class="form-control" required maxlength="80">
-        <div class="invalid-feedback">Obligatorio</div>
+        <div class="invalid-feedback">Este campo es obligatorio.</div>
       </div>
       <div class="row g-2">
         <div class="col-md-6">
           <label class="form-label">Dominio</label>
           <input id="c_dom_in" class="form-control" required list="c_dlDomains">
           <datalist id="c_dlDomains"></datalist>
-          <div class="invalid-feedback">Obligatorio</div>
+          <div class="invalid-feedback">Este campo es obligatorio.</div>
         </div>
         <div class="col-md-6">
           <label class="form-label">Sensibilidad</label>
@@ -424,11 +427,11 @@
             <option>Público</option><option>Interno</option>
             <option>Confidencial</option><option>Alto Secreto</option>
           </select>
-          <div class="invalid-feedback">Obligatorio</div>
+          <div class="invalid-feedback">Este campo es obligatorio.</div>
         </div>
       </div>
       <div class="mb-2">
-        <label class="form-label">Etiquetas (coma)</label>
+        <label class="form-label">Etiquetas (separadas por coma)</label>
         <input id="c_tags_in" class="form-control" placeholder="PII, Crítico, ...">
       </div>
       <div class="mb-2">
@@ -462,7 +465,7 @@
         <ul class="nav nav-tabs" role="tablist">
           <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab_cols" type="button">Columnas</button></li>
           <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_quality" type="button">Calidad</button></li>
-          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_lineage" type="button">Lineage</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_lineage" type="button">Linaje</button></li>
         </ul>
         <div class="tab-content pt-3">
           <div class="tab-pane fade show active" id="tab_cols"><div id="md_cols"></div></div>
@@ -475,17 +478,109 @@
   </div>
 </div>
 
+<!-- Modal: Policy Editor -->
+<div class="modal fade" id="mdlPolicy" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editor de Política</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="p_form">
+          <input type="hidden" id="p_id_edit">
+          <div class="mb-3">
+            <label class="form-label">Título</label>
+            <input id="p_title_edit" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Contenido</label>
+            <textarea id="p_content_edit" class="form-control" rows="8" required></textarea>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-label">Estado</label>
+              <select id="p_status_edit" class="form-select">
+                <option>Vigente</option>
+                <option>Borrador</option>
+                <option>Obsoleto</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="p_save">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Sharing Agreement Editor -->
+<div class="modal fade" id="mdlSharing" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editor de Acuerdo de Intercambio</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="sh_form">
+          <input type="hidden" id="sh_id_edit">
+          <div class="mb-3">
+            <label class="form-label">Nombre del Acuerdo</label>
+            <input id="sh_name_edit" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Partes (separadas por coma)</label>
+            <input id="sh_parties_edit" class="form-control" required>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <label class="form-label">Confidencialidad</label>
+              <select id="sh_conf_edit" class="form-select">
+                <option>Público</option>
+                <option>Interno</option>
+                <option>Confidencial</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Vigencia Hasta</label>
+              <input type="date" id="sh_valid_edit" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Estado</label>
+              <select id="sh_state_edit" class="form-select">
+                <option>Vigente</option>
+                <option>Por Vencer</option>
+                <option>Vencido</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="sh_save">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Modal: Builder Wizard (Reglas de Calidad) -->
 <div class="modal fade" id="mdlBuilder" tabindex="-1">
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title"><i class="bi bi-sliders2 me-2"></i>Nueva Regla</h5>
+        <h5 class="modal-title"><i class="bi bi-sliders2 me-2"></i>Constructor de Reglas</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <div class="row g-3">
-          <div class="col-md-4">
+        <form id="b_form">
+          <input type="hidden" id="b_id">
+          <div class="row g-3">
+            <div class="col-md-4">
             <label class="form-label">Dataset</label>
             <input id="b_ds" class="form-control" list="b_dlDatasets">
             <datalist id="b_dlDatasets"></datalist>
@@ -495,7 +590,7 @@
             <input id="b_field" class="form-control">
           </div>
           <div class="col-md-4">
-            <label class="form-label">Tipo</label>
+            <label class="form-label">Tipo de Regla</label>
             <select id="b_type" class="form-select">
               <option>Completitud</option><option>Unicidad</option>
               <option>Rango</option><option>Formato</option><option>Referencia</option>
@@ -516,7 +611,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button id="b_add" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Agregar</button>
+        <button id="b_add" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Agregar Regla</button>
         <button class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button>
       </div>
     </div>
@@ -860,6 +955,7 @@
         <td class="text-end">
           <div class="btn-group btn-group-sm">
             <button class="btn btn-outline-light" onclick='dqRun("${r.id}")' title="Ejecutar"><i class="bi bi-play"></i></button>
+            <button class="btn btn-outline-light" onclick='dqEdit("${r.id}")' title="Editar"><i class="bi bi-pencil"></i></button>
             <button class="btn btn-outline-danger" onclick='dqDel("${r.id}")' title="Eliminar"><i class="bi bi-trash"></i></button>
           </div>
         </td>
@@ -907,6 +1003,18 @@
     r.lastRun = new Date().toISOString();
     dqRender(); Toast('Regla ejecutada');
   };
+  window.dqEdit = (id) => {
+    const rule = dqStore.rules.find(r => r.id === id);
+    if (!rule) return;
+    $('#b_id').value = id;
+    $('#b_ds').value = rule.dataset;
+    $('#b_field').value = rule.field;
+    $('#b_type').value = rule.type;
+    $('#b_expr').value = rule.expr;
+    $('#b_sev').value = rule.severity;
+    $('#b_thr').value = rule.threshold;
+    bootstrap.Modal.getOrCreateInstance('#mdlBuilder').show();
+  };
   window.dqDel = (id)=>{ if(!confirm('¿Eliminar regla?')) return; dqStore.rules = dqStore.rules.filter(r=>r.id!==id); dqRender(); Toast('Regla eliminada'); };
   // export/import
   $('#dq_export').addEventListener('click', ()=>{
@@ -927,80 +1035,121 @@
   </script>
 <script>
   /************* Builder (Reglas) *************/
-  const B_KEY='b_rules';
-  const bStore = { rules: Storage.get(B_KEY, []) };
-  function bSave(){ Storage.set(B_KEY,bStore.rules); }
-  function bRender(){
-    $('#b_tbl tbody').innerHTML = bStore.rules.map((r,i)=>`
-      <tr>
-        <td>${r.name||`${r.type} ${r.field||''}`}</td>
-        <td><span class="badge text-bg-primary">${r.domain||'-'}</span></td>
-        <td>${r.dataset||'-'}</td>
-        <td>${r.field||'-'}</td>
-        <td><span class="badge ${r.severity==='Crítica'?'text-bg-danger':r.severity==='Alta'?'text-bg-warning':r.severity==='Media'?'text-bg-info':'text-bg-secondary'}">${r.severity}</span></td>
-        <td>${r.threshold||95}%</td>
-        <td class="text-end">
-          <div class="btn-group btn-group-sm">
-            <button class="btn btn-outline-light" onclick="bDel(${i})"><i class="bi bi-trash"></i></button>
-          </div>
-        </td>
-      </tr>
-    `).join('');
-    bSave();
-  }
-  window.bDel = (i)=>{ bStore.rules.splice(i,1); bRender(); Toast('Regla eliminada'); };
+  $('#q_new').addEventListener('click', () => {
+    $('#b_form').reset();
+    $('#b_id').value = '';
+  });
+
   $('#b_add').addEventListener('click', ()=>{
-    const rule = {
-      name: `${$('#b_type').value} ${$('#b_field').value||''}`.trim(),
-      domain: $('#c_dom_in').value || 'General',
+    const id = $('#b_id').value;
+    const rule_data = {
       dataset: $('#b_ds').value.trim(),
       field: $('#b_field').value.trim(),
       type: $('#b_type').value,
       expr: $('#b_expr').value.trim(),
       severity: $('#b_sev').value,
-      threshold: +$('#b_thr').value || 95
+      threshold: +$('#b_thr').value || 95,
     };
-    bStore.rules.push(rule); bRender(); Toast('Regla añadida'); bootstrap.Modal.getInstance('#mdlBuilder')?.hide();
+    rule_data.name = `${rule_data.type} en ${rule_data.dataset}:${rule_data.field}`;
+
+    if (id) { // Update existing rule
+      const index = dqStore.rules.findIndex(r => r.id === id);
+      if (index > -1) {
+        dqStore.rules[index] = { ...dqStore.rules[index], ...rule_data };
+        Toast('Regla actualizada');
+      }
+    } else { // Create new rule
+      const new_rule = {
+          id: uuid(),
+          domain: 'General', // Or derive from dataset
+          status: 'Activa',
+          lastRun: new Date().toISOString(),
+          result: 'Pendiente',
+          failures: 0,
+          ...rule_data
+      };
+      dqStore.rules.push(new_rule);
+      Toast('Regla añadida');
+    }
+
+    dqRender();
+    bootstrap.Modal.getInstance('#mdlBuilder')?.hide();
   });
-  $('#b_export').addEventListener('click', ()=>{
-    const blob=new Blob([JSON.stringify(bStore.rules,null,2)],{type:'application/json'});
-    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='builder_rules.json'; a.click();
-  });
-  $('#b_import').addEventListener('change', (e)=>{
-    const f=e.target.files[0]; if(!f) return; const r=new FileReader();
-    r.onload=(ev)=>{ try{ const arr=JSON.parse(ev.target.result); if(!Array.isArray(arr)) throw new Error('Formato inválido'); bStore.rules=arr; bRender(); Toast('Importado'); }catch(err){ alert('No se pudo importar: '+err.message);} };
-    r.readAsText(f); e.target.value='';
-  });
-  bRender();
 
   /************* Policies *************/
   const P_KEY='p_items';
   const pSeed=[{id:uuid(),title:'Política de Clasificación',status:'Vigente',version:2,content:'Niveles: Público, Interno, Confidencial, Alto Secreto.',history:['v1 creado','v2 ajustes'],updatedAt:new Date().toISOString()}];
   const pStore={ items: Storage.get(P_KEY, pSeed), sel:null };
+  const pModal = new bootstrap.Modal('#mdlPolicy');
+
   function pSave(){ Storage.set(P_KEY,pStore.items); }
   function pRenderList(){
     const q=$('#p_q').value?.toLowerCase()||'';
     $('#p_list').innerHTML = pStore.items
       .filter(p=>p.title.toLowerCase().includes(q))
-      .map(p=>`<button class="list-group-item list-group-item-action bg-transparent text-light text-start" onclick="pOpen('${p.id}')">
+      .map(p=>`<a href="#" class="list-group-item list-group-item-action bg-transparent text-light text-start" onclick="event.preventDefault(); pOpen('${p.id}')">
         <div class="d-flex justify-content-between"><span>${p.title}</span>
         <span class="badge ${p.status==='Vigente'?'text-bg-success':p.status==='Borrador'?'text-bg-info':'text-bg-secondary'}">${p.status}</span></div>
         <small class="text-secondary">v${p.version} · ${fmtDate(p.updatedAt)}</small>
-      </button>`).join('');
+      </a>`).join('');
   }
-  window.pOpen = (id)=>{
+  function pOpen(id){
     const p = pStore.items.find(x=>x.id===id); pStore.sel=p;
+    if(!p) return;
     $('#p_title').textContent=p.title;
     $('#p_meta').textContent=`Estado: ${p.status} · v${p.version}`;
     $('#p_content').textContent=p.content;
     $('#p_diff').textContent=(p.history||[]).map(h=>'• '+h).join('\n');
-  };
-  $('#p_new').addEventListener('click', ()=>{
-    const p={id:uuid(),title:'Nueva Política',status:'Borrador',version:1,content:'...',history:['creado'],updatedAt:new Date().toISOString()};
-    pStore.items.unshift(p); pSave(); pRenderList(); Toast('Creada');
-  });
+  }
+  function pOpenModal(id) {
+      const item = id ? pStore.items.find(p => p.id === id) : null;
+      $('#p_form').reset();
+      $('#p_id_edit').value = item ? item.id : '';
+      $('#p_title_edit').value = item ? item.title : '';
+      $('#p_content_edit').value = item ? item.content : '';
+      $('#p_status_edit').value = item ? item.status : 'Borrador';
+      pModal.show();
+  }
+  $('#p_new').addEventListener('click', () => pOpenModal(null));
   $('#p_q').addEventListener('input', pRenderList);
+  $('#p_save').addEventListener('click', () => {
+      const id = $('#p_id_edit').value;
+      const title = $('#p_title_edit').value;
+      const content = $('#p_content_edit').value;
+      const status = $('#p_status_edit').value;
+      if (!title || !content) return Toast('Título y contenido son obligatorios.');
+
+      if (id) { // Update
+          const item = pStore.items.find(p => p.id === id);
+          item.title = title;
+          item.content = content;
+          if (item.status !== status) {
+            item.status = status;
+            item.history.push(`v${item.version} -> ${status}`);
+          }
+          item.version++;
+          item.history.push(`v${item.version} editada`);
+          item.updatedAt = new Date().toISOString();
+      } else { // Create
+          const newItem = {
+              id: uuid(),
+              title,
+              content,
+              status,
+              version: 1,
+              history: ['v1 creado'],
+              updatedAt: new Date().toISOString()
+          };
+          pStore.items.unshift(newItem);
+      }
+      pSave();
+      pRenderList();
+      if (id) pOpen(id);
+      pModal.hide();
+      Toast('Política guardada.');
+  });
   pRenderList();
+  if(pStore.items.length > 0) pOpen(pStore.items[0].id);
 
   /************* RACI *************/
   const R_KEY='raci_rows';
@@ -1016,6 +1165,7 @@
         <td contenteditable oninput="rEdit(${i},'A',this.innerText)">${r.A}</td>
         <td contenteditable oninput="rEdit(${i},'C',this.innerText)">${r.C}</td>
         <td contenteditable oninput="rEdit(${i},'I',this.innerText)">${r.I}</td>
+        <td class="text-end"><button class="btn btn-sm btn-outline-danger" onclick="rDel(${i})"><i class="bi bi-trash"></i></button></td>
       </tr>`).join('');
   }
   window.rEdit = (i,k,v)=>{
@@ -1023,8 +1173,22 @@
     if(k==='A' && (row.A.split(',').length>1)) Toast('Solo un “A” por fila');
     rSave();
   };
+  window.rDel = (i) => {
+    if (confirm('¿Eliminar esta fila de la matriz RACI?')) {
+      rStore.rows.splice(i, 1);
+      rSave();
+      rRender();
+      Toast('Fila eliminada.');
+    }
+  };
+  $('#r_new').addEventListener('click', () => {
+    rStore.rows.push({process:'Nuevo Proceso', artifact:'Nuevo Artefacto', R:'', A:'', C:'', I:''});
+    rSave();
+    rRender();
+    Toast('Nueva fila agregada al final.');
+  });
   $('#raci_export').addEventListener('click', ()=>{
-    const head=['Proceso','Artefacto','R','A','C','I'];
+    const head=['Proceso','Artefacto','Responsable','Aprobador','Consultado','Informado'];
     const rows=rStore.rows.map(r=>[r.process,r.artifact,r.R,r.A,r.C,r.I].map(x=>`"${(x||'').replaceAll('"','""')}"`).join(','));
     const blob=new Blob([head.join(',')+'\n'+rows.join('\n')],{type:'text/csv;charset=utf-8;'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='raci.csv'; a.click();
   });
@@ -1043,7 +1207,7 @@
       <div class="mb-2"><label class="form-label">Justificación</label><textarea id="a_why" class="form-control"></textarea></div>
       <button id="a_submit" class="btn btn-primary">Enviar</button>`;
     $('#a_submit').onclick = ()=>{
-      const id=(Math.max(...aStore.rows.map(r=>r.id))+1)||1001;
+      const id=(Math.max(0, ...aStore.rows.map(r=>r.id))+1)||1001;
       aStore.rows.unshift({id,user:$('#a_user').value,resource:$('#a_res').value,state:'Pendiente',etaMins:120});
       aSave(); aRenderTable(); Toast('Solicitud enviada');
     };
@@ -1056,14 +1220,16 @@
         <td>${aCountdown(r.etaMins)}</td>
         <td class="text-end">
           <div class="btn-group btn-group-sm">
-            <button class="btn btn-outline-success" onclick="aApprove(${r.id})"><i class="bi bi-check2"></i></button>
-            <button class="btn btn-outline-danger" onclick="aReject(${r.id})"><i class="bi bi-x"></i></button>
+            <button class="btn btn-outline-success" onclick="aApprove(${r.id})" title="Aprobar"><i class="bi bi-check2"></i></button>
+            <button class="btn btn-outline-danger" onclick="aReject(${r.id})" title="Rechazar"><i class="bi bi-x"></i></button>
+            <button class="btn btn-outline-light" onclick="aDel(${r.id})" title="Eliminar"><i class="bi bi-trash"></i></button>
           </div>
         </td>
       </tr>`).join('');
   }
   window.aApprove=(id)=>{ const r=aStore.rows.find(x=>x.id===id); if(!r) return; r.state='Aprobado'; r.etaMins=0; aSave(); aRenderTable(); Toast('Aprobado'); };
   window.aReject =(id)=>{ const r=aStore.rows.find(x=>x.id===id); if(!r) return; r.state='Rechazado'; r.etaMins=0; aSave(); aRenderTable(); Toast('Rechazado'); };
+  window.aDel = (id) => { if(confirm('¿Eliminar solicitud?')){ aStore.rows = aStore.rows.filter(r=>r.id!==id); aSave(); aRenderTable(); Toast('Eliminado'); }};
   $('#a_new').addEventListener('click', aRenderForm);
   aRenderForm(); aRenderTable();
 
@@ -1099,13 +1265,13 @@
 
   /************* Retention *************/
   const RT_KEY='rt_rows';
-  const rtSeed=[ {domain:'Personas', table:'clientes', action:'retener', date:addDays(5)}, {domain:'Polizas', table:'polizas', action:'eliminar', date:addDays(14)} ];
+  const rtSeed=[ {id:uuid(),domain:'Personas', table:'clientes_bkp', action:'retener', date:addDays(5)}, {id:uuid(),domain:'Polizas', table:'polizas_viejas', action:'eliminar', date:addDays(14)} ];
   const rtStore={ rows: Storage.get(RT_KEY, rtSeed) };
   function addDays(n){ const d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
   function rtSave(){ Storage.set(RT_KEY, rtStore.rows); }
   function rtRender(){
     $('#rt_tbl tbody').innerHTML = rtStore.rows.map(r=>`
-      <tr><td>${r.domain}</td><td>${r.table}</td><td><span class="badge ${r.action==='eliminar'?'text-bg-danger':'text-bg-secondary'}">${r.action}</span></td><td>${r.date}</td></tr>`).join('');
+      <tr><td>${r.domain}</td><td>${r.table}</td><td><span class="badge ${r.action==='eliminar'?'text-bg-danger':'text-bg-secondary'}">${r.action}</span></td><td>${r.date}</td><td class="text-end"><button class="btn btn-sm btn-outline-danger" onclick="rtDel('${r.id}')"><i class="bi bi-trash"></i></button></td></tr>`).join('');
     // calendar current month
     const today=new Date(); const first=new Date(today.getFullYear(), today.getMonth(),1); const last=new Date(today.getFullYear(), today.getMonth()+1,0);
     const cal=$('#rt_calendar'); cal.innerHTML='';
@@ -1119,36 +1285,39 @@
       cell.appendChild(card); cal.appendChild(cell);
     }
   }
+  window.rtDel = (id) => { if(confirm('¿Eliminar registro?')){ rtStore.rows = rtStore.rows.filter(r=>r.id!==id); rtSave(); rtRender(); Toast('Eliminado'); }};
   $('#rt_new').addEventListener('click', ()=>{
-    const entry = {domain:'General', table:'tabla_'+(rtStore.rows.length+1), action: Math.random()>0.5?'retener':'eliminar', date:addDays(7)};
+    const entry = {id:uuid(), domain:'General', table:'tabla_'+(rtStore.rows.length+1), action: Math.random()>0.5?'retener':'eliminar', date:addDays(7)};
     rtStore.rows.push(entry); rtSave(); rtRender(); Toast('Registro añadido');
   });
   rtRender();
 
   /************* Kanban *************/
   const K_KEY='k_cards';
-  const kSeed=[ {id:1,title:'Duplicados en DNI', col:'Backlog'}, {id:2,title:'Formato de placa inválida', col:'En Progreso'}, {id:3,title:'Dataset sin owner', col:'Backlog'} ];
+  const kSeed=[ {id:uuid(),title:'Duplicados en DNI', col:'Backlog'}, {id:uuid(),title:'Formato de placa inválida', col:'En Progreso'}, {id:uuid(),title:'Dataset sin owner', col:'Backlog'} ];
   const kStore={ cards: Storage.get(K_KEY, kSeed) };
   function kSave(){ Storage.set(K_KEY,kStore.cards); }
   function kCounts(){ const b=kStore.cards.filter(c=>c.col==='Backlog').length; const p=kStore.cards.filter(c=>c.col==='En Progreso').length; const r=kStore.cards.filter(c=>c.col==='En Revisión').length; const d=kStore.cards.filter(c=>c.col==='Hecho').length; $('#k_b_count').textContent=b; $('#k_p_count').textContent=p; $('#k_r_count').textContent=r; $('#k_d_count').textContent=d; }
   function kRender(){
     ['k_backlog','k_progress','k_review','k_done'].forEach(id=> $('#'+id).querySelectorAll('.draggable').forEach(e=>e.remove()));
     kStore.cards.forEach(c=>{
-      const el=document.createElement('div'); el.className='draggable p-2 mt-2 border rounded'; el.draggable=true; el.dataset.id=c.id; el.textContent=c.title;
+      const el=document.createElement('div'); el.className='draggable p-2 mt-2 border rounded'; el.draggable=true; el.dataset.id=c.id;
+      el.innerHTML = `${c.title} <a href="#" onclick="kDel('${c.id}')" class="float-end text-danger">&times;</a>`;
       el.addEventListener('dragstart',e=> e.dataTransfer.setData('text/plain', c.id));
       const col = c.col==='Backlog'?'k_backlog':c.col==='En Progreso'?'k_progress':c.col==='En Revisión'?'k_review':'k_done';
       $('#'+col).appendChild(el);
     });
     kCounts(); kSave();
   }
+  window.kDel = (id) => { event.stopPropagation(); kStore.cards = kStore.cards.filter(c=>c.id!==id); kRender(); Toast('Incidencia eliminada'); };
   ['k_backlog','k_progress','k_review','k_done'].forEach(id=>{
     const col=$('#'+id);
     col.addEventListener('dragover',e=>e.preventDefault());
-    col.addEventListener('drop',e=>{ e.preventDefault(); const idc=+e.dataTransfer.getData('text/plain'); const card=kStore.cards.find(x=>x.id===idc); card.col = col.dataset.col; kRender(); });
+    col.addEventListener('drop',e=>{ e.preventDefault(); const idc=e.dataTransfer.getData('text/plain'); const card=kStore.cards.find(x=>x.id===idc); card.col = col.dataset.col; kRender(); });
   });
   $('#k_new').addEventListener('click', ()=>{
-    const id=(Math.max(0,...kStore.cards.map(c=>c.id))+1)||1;
-    kStore.cards.push({id,title:'Nueva incidencia '+id,col:'Backlog'}); kRender(); Toast('Incidencia creada');
+    const title = prompt('Título de la nueva incidencia:');
+    if(title) { kStore.cards.push({id:uuid(),title,col:'Backlog'}); kRender(); Toast('Incidencia creada'); }
   });
   kRender();
 
@@ -1220,8 +1389,9 @@
 
   /************* Sharing *************/
   const SH_KEY='sh_rows';
-  const shSeed=[ {name:'Acuerdo Personas↔Finanzas', parties:['Personas','Finanzas'], conf:'Confidencial', validUntil:addDays(30), state:'Vigente'}, {name:'Acuerdo Seguros↔Siniestros', parties:['Seguros','Siniestros'], conf:'Interno', validUntil:addDays(10), state:'Por vencer'} ];
+  const shSeed=[ {id: uuid(), name:'Acuerdo Personas↔Finanzas', parties:['Personas','Finanzas'], conf:'Confidencial', validUntil:addDays(30), state:'Vigente'}, {id: uuid(), name:'Acuerdo Seguros↔Siniestros', parties:['Seguros','Siniestros'], conf:'Interno', validUntil:addDays(10), state:'Por vencer'} ];
   const shStore={ rows: Storage.get(SH_KEY, shSeed) };
+  const shModal = new bootstrap.Modal('#mdlSharing');
   function shSave(){ Storage.set(SH_KEY, shStore.rows); }
   function shRender(){ $('#sh_tbl tbody').innerHTML = shStore.rows.map(r=>`
     <tr>
@@ -1230,8 +1400,44 @@
       <td><span class="badge ${r.conf==='Confidencial'?'text-bg-warning':'text-bg-secondary'}">${r.conf}</span></td>
       <td>${r.validUntil}</td>
       <td><span class="badge ${r.state==='Vigente'?'text-bg-success':r.state==='Vencido'?'text-bg-danger':'text-bg-warning'}">${r.state}</span></td>
+      <td class="text-end">
+        <button class="btn btn-sm btn-outline-light" onclick="shOpenModal('${r.id}')"><i class="bi bi-pencil"></i></button>
+        <button class="btn btn-sm btn-outline-danger" onclick="shDel('${r.id}')"><i class="bi bi-trash"></i></button>
+      </td>
     </tr>`).join(''); }
-  $('#sh_new').addEventListener('click', ()=>{ shStore.rows.unshift({name:'Nuevo acuerdo '+(shStore.rows.length+1), parties:['Dom1','Dom2'], conf:'Interno', validUntil:addDays(20), state:'Vigente'}); shSave(); shRender(); Toast('Acuerdo creado'); });
+  window.shOpenModal = (id) => {
+    const item = id ? shStore.rows.find(s => s.id === id) : null;
+    $('#sh_form').reset();
+    $('#sh_id_edit').value = item ? item.id : '';
+    $('#sh_name_edit').value = item ? item.name : '';
+    $('#sh_parties_edit').value = item ? item.parties.join(', ') : '';
+    $('#sh_conf_edit').value = item ? item.conf : 'Interno';
+    $('#sh_valid_edit').value = item ? item.validUntil : addDays(30);
+    $('#sh_state_edit').value = item ? item.state : 'Vigente';
+    shModal.show();
+  };
+  window.shDel = (id) => { if(confirm('¿Eliminar acuerdo?')){ shStore.rows = shStore.rows.filter(r => r.id !== id); shSave(); shRender(); Toast('Acuerdo eliminado.'); } };
+  $('#sh_new').addEventListener('click', () => shOpenModal(null));
+  $('#sh_save').addEventListener('click', () => {
+    const id = $('#sh_id_edit').value;
+    const values = {
+        name: $('#sh_name_edit').value,
+        parties: $('#sh_parties_edit').value.split(',').map(p => p.trim()),
+        conf: $('#sh_conf_edit').value,
+        validUntil: $('#sh_valid_edit').value,
+        state: $('#sh_state_edit').value
+    };
+    if (id) {
+        const item = shStore.rows.find(s => s.id === id);
+        Object.assign(item, values);
+    } else {
+        shStore.rows.unshift({id: uuid(), ...values});
+    }
+    shSave();
+    shRender();
+    shModal.hide();
+    Toast('Acuerdo guardado.');
+  });
   shRender();
 
   </script>
