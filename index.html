@@ -3,298 +3,204 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Gobierno de Datos – Suite Frontend</title>
+  <title>Gobierno de Datos – Suite v2</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <style>
-    :root{ --bg:#0b1220; --panel:#0f1a2b; --ink:#e6ecff; --muted:#8aa0c8; }
-    body{ background:var(--bg); color:var(--ink); }
-    .navbar, .offcanvas, .modal-content{ background:var(--panel); color:var(--ink); }
-    .sidebar{ width: 280px; background:var(--panel); position: fixed; top:56px; bottom:0; left:0; border-right:1px solid rgba(255,255,255,.08); overflow:auto; }
-    main{ margin-left: 280px; padding: 1rem; }
-    .card{ background:var(--panel); border:1px solid rgba(255,255,255,.08); }
-    .table{ color:var(--ink); }
-    .table thead th, .table tbody td{ border-color: rgba(255,255,255,.12); }
-    .form-control, .form-select{ background:#0b1220; color:var(--ink); border-color:rgba(255,255,255,.18); }
-    .form-control:focus, .form-select:focus{ box-shadow:0 0 0 .25rem rgba(13,110,253,.15); }
-    .chip{ border-radius:999px; padding:.25rem .5rem; font-size:.75rem; border:1px solid rgba(255,255,255,.18); }
-    .truncate{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .hidden{ display:none !important; }
-    .drag-col{ min-height: 260px; }
-    .kanban-card{ background:#0b1220; border:1px dashed rgba(255,255,255,.2); border-radius: .75rem; padding:.75rem; margin-bottom:.5rem; cursor:grab; }
-    canvas.lineage{ width:100%; height:360px; background:#0b1220; border-radius: .75rem; }
-    .spark{ height: 52px; width: 100%; }
-    .calendar{ display:grid; grid-template-columns: repeat(7, 1fr); gap:.5rem; }
-    .calendar .day{ padding:.5rem; border:1px solid rgba(255,255,255,.1); border-radius:.5rem; min-height:70px; }
-    .toolbar{ position:sticky; top:0; z-index:5; background:transparent; padding-bottom:.5rem; }
+    :root{ --bg:#0b1220; --panel:#0f1a2b; --ink:#e6ecff; --muted:#8aa0c8; --primary: #4da3ff; }
+    body{ background:var(--bg); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; }
+    .topbar{ position:fixed; top:0; left:0; right:0; height:56px; background:var(--panel); border-bottom:1px solid rgba(255,255,255,.1); z-index:1030; }
+    .sidebar{ position:fixed; top:56px; left:0; bottom:0; width:260px; background:var(--panel); border-right:1px solid rgba(255,255,255,.1); padding:1rem; overflow:auto; }
+    .sidebar .list-group-item{ border:0; margin-bottom:.125rem; border-radius:.5rem; }
+    .sidebar .list-group-item.active-item{ background:rgba(var(--bs-primary-rgb),.1); color:var(--primary); }
+    .main-content{ margin-left:260px; margin-top:56px; padding:1.5rem; }
+    .section{ display:none; }
+    .section.active{ display:block; animation:fadeIn .3s; }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .card{ background:var(--panel); border-color:rgba(255,255,255,.1); }
+    .table{ color:var(--ink); border-color:rgba(255,255,255,.15); }
+    .form-control,.form-select{ background-color:var(--bg); color:var(--ink); border-color:rgba(255,255,255,.2); }
+    .form-control:focus,.form-select:focus{ box-shadow:0 0 0 .25rem rgba(var(--bs-primary-rgb),.2); }
+    .offcanvas, .modal-content{ background:var(--panel); color:var(--ink); }
+    .kanban{ display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
+    .kanban-col{ background:rgba(255,255,255,.03); border-radius:.5rem; padding:.75rem; min-height:300px; }
+    .kanban-card{ background:var(--bg); border:1px solid rgba(255,255,255,.1); border-radius:.5rem; padding:.75rem; margin-bottom:.5rem; cursor:grab; }
   </style>
 </head>
 <body>
-  <!-- NAV -->
-  <nav class="navbar navbar-expand-lg border-bottom sticky-top">
-    <div class="container-fluid">
-      <a class="navbar-brand text-light d-flex align-items-center gap-2" href="#">
-        <i class="bi bi-shield-lock"></i>
-        <span>Gobierno de Datos <span class="text-primary">Suite</span></span>
-      </a>
-      <div class="d-flex align-items-center gap-2">
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" id="switchMock" checked>
-          <label class="form-check-label" for="switchMock" title="Mock API">Mock</label>
-        </div>
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" id="switchAudit">
-          <label class="form-check-label" for="switchAudit" title="Modo auditoría">Audit</label>
-        </div>
-        <select id="selLang" class="form-select form-select-sm" style="width:auto">
-          <option value="es">ES</option>
-          <option value="en">EN</option>
-        </select>
-      </div>
-    </div>
-  </nav>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar p-3">
-    <div class="input-group input-group-sm mb-3">
-      <span class="input-group-text bg-transparent text-secondary"><i class="bi bi-search"></i></span>
-      <input id="navSearch" class="form-control" placeholder="Buscar módulo" />
-    </div>
-    <div class="list-group list-group-flush" id="navList">
-      <!-- items dinámicos -->
-    </div>
-    <div class="mt-3 small text-secondary">v1.0 – LocalStorage Powered</div>
-  </aside>
+<div class="topbar d-flex align-items-center px-3">
+  <a class="navbar-brand text-light d-flex align-items-center gap-2" href="#">
+    <i class="bi bi-shield-lock"></i>
+    <span>Gobierno de Datos <span class="text-primary">Suite v2</span></span>
+  </a>
+  <div class="ms-auto d-flex align-items-center gap-3">
+    <label class="btn btn-sm btn-outline-light mb-0">
+      <i class="bi bi-upload"></i> Importar
+      <input type="file" id="importAll" class="d-none" accept="application/json">
+    </label>
+    <button id="btnExportAll" class="btn btn-sm btn-outline-light"><i class="bi bi-download"></i> Exportar</button>
+    <button id="btnTheme" class="btn btn-sm btn-outline-light"><i class="bi bi-moon-stars"></i></button>
+  </div>
+</div>
 
-  <!-- MAIN -->
-  <main class="container-fluid">
+<aside class="sidebar">
+  <input id="menuSearch" class="form-control mb-3" placeholder="Buscar módulo...">
+  <div id="menu" class="list-group list-group-flush">
+    <a href="#glossary" class="list-group-item list-group-item-action bg-transparent text-light" data-section="glossary"><i class="bi bi-journal-text me-2"></i>Business Glossary</a>
+    <a href="#catalog" class="list-group-item list-group-item-action bg-transparent text-light" data-section="catalog"><i class="bi bi-collection me-2"></i>Data Catalog</a>
+    <a href="#quality" class="list-group-item list-group-item-action bg-transparent text-light" data-section="quality"><i class="bi bi-clipboard2-data me-2"></i>Quality Dashboard</a>
+    <a href="#policies" class="list-group-item list-group-item-action bg-transparent text-light" data-section="policies"><i class="bi bi-file-earmark-text me-2"></i>Políticas & Estándares</a>
+    <a href="#raci" class="list-group-item list-group-item-action bg-transparent text-light" data-section="raci"><i class="bi bi-grid-1x2 me-2"></i>Matriz RACI</a>
+    <a href="#access" class="list-group-item list-group-item-action bg-transparent text-light" data-section="access"><i class="bi bi-key me-2"></i>Acceso a Datos</a>
+    <a href="#dpia" class="list-group-item list-group-item-action bg-transparent text-light" data-section="dpia"><i class="bi bi-shield-lock me-2"></i>DPIA</a>
+    <a href="#retention" class="list-group-item list-group-item-action bg-transparent text-light" data-section="retention"><i class="bi bi-calendar3 me-2"></i>Retención</a>
+    <a href="#kanban" class="list-group-item list-group-item-action bg-transparent text-light" data-section="kanban"><i class="bi bi-columns-gap me-2"></i>Incidencias</a>
+    <a href="#contracts" class="list-group-item list-group-item-action bg-transparent text-light" data-section="contracts"><i class="bi bi-braces-asterisk me-2"></i>Data Contracts</a>
+    <a href="#domains" class="list-group-item list-group-item-action bg-transparent text-light" data-section="domains"><i class="bi bi-diagram-3-center me-2"></i>Mapa de Dominios</a>
+    <a href="#training" class="list-group-item list-group-item-action bg-transparent text-light" data-section="training"><i class="bi bi-mortarboard me-2"></i>Entrenamiento</a>
+    <a href="#sharing" class="list-group-item list-group-item-action bg-transparent text-light" data-section="sharing"><i class="bi bi-people me-2"></i>Data Sharing</a>
+    <a href="#settings" class="list-group-item list-group-item-action bg-transparent text-light" data-section="settings"><i class="bi bi-gear me-2"></i>Ajustes</a>
+  </div>
+</aside>
 
-    <!-- Business Glossary -->
-    <section data-route="glossary" class="hidden">
-      <div class="toolbar d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0"><i class="bi bi-journal-text me-2"></i>Business Glossary</h4>
-        <div class="d-flex gap-2">
-          <button class="btn btn-outline-light btn-sm" id="gl_export_csv"><i class="bi bi-filetype-csv"></i> CSV</button>
-          <button class="btn btn-outline-light btn-sm" id="gl_export_json"><i class="bi bi-filetype-json"></i> JSON</button>
-          <label class="btn btn-outline-light btn-sm mb-0">
-            <i class="bi bi-upload"></i> Importar
-            <input type="file" id="gl_import" class="d-none" accept="application/json" />
-          </label>
-          <button class="btn btn-primary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#ocGlossary"><i class="bi bi-plus-lg"></i> Nuevo</button>
-        </div>
-      </div>
-      <div class="card mb-3"><div class="card-body">
-        <div class="row g-3">
-          <div class="col-md-4"><input id="gl_q" class="form-control" placeholder="Buscar término, definición, dueño…"></div>
-          <div class="col-md-3"><select id="gl_domain" class="form-select"><option value="">Todos los dominios</option></select></div>
-          <div class="col-md-3"><select id="gl_sens" class="form-select"><option value="">Todas las sensibilidades</option><option>Público</option><option>Interno</option><option>Confidencial</option><option>Alto Secreto</option></select></div>
-          <div class="col-md-2"><select id="gl_status" class="form-select"><option value="">Todos</option><option>Vigente</option><option>Borrador</option><option>Obsoleto</option></select></div>
-        </div>
-      </div></div>
-      <div class="card"><div class="card-body">
-        <div class="table-responsive">
-          <table class="table align-middle" id="gl_tbl">
-            <thead><tr><th>Término</th><th>Definición</th><th>Dominio</th><th>Dueño</th><th>Sensibilidad</th><th>Estado</th><th>Actualizado</th><th class="text-end">Acciones</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div></div>
-    </section>
-
-    <!-- Data Catalog -->
-    <section data-route="catalog" class="hidden">
-      <div class="toolbar d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0"><i class="bi bi-collection me-2"></i>Data Catalog</h4>
-        <div class="d-flex gap-2">
-          <button class="btn btn-outline-light btn-sm" id="dc_save_collections"><i class="bi bi-bookmark"></i> Guardar colección</button>
-        </div>
-      </div>
-      <div class="card mb-3"><div class="card-body">
-        <div class="row g-3">
-          <div class="col-md-4"><input id="dc_q" class="form-control" placeholder="Buscar dataset, columna…"></div>
-          <div class="col-md-3"><select id="dc_domain" class="form-select"><option value="">Todos los dominios</option></select></div>
-          <div class="col-md-3"><select id="dc_sensitivity" class="form-select"><option value="">Todas las sensibilidades</option><option>PII</option><option>Confidencial</option><option>Interno</option><option>Público</option></select></div>
-          <div class="col-md-2"><select id="dc_piionly" class="form-select"><option value="">Tipo</option><option value="pii">Solo PII</option><option value="npii">Sin PII</option></select></div>
-        </div>
-      </div></div>
-      <div class="row" id="dc_grid"></div>
-
-      <!-- Ficha dataset -->
-      <div class="modal fade" id="mdDataset" tabindex="-1">
-        <div class="modal-dialog modal-xl modal-dialog-scrollable">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title"><i class="bi bi-database me-2"></i><span id="md_title">Dataset</span></h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-              <ul class="nav nav-tabs" role="tablist">
-                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab_cols" type="button">Columnas</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_quality" type="button">Calidad</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_lineage" type="button">Lineage</button></li>
-              </ul>
-              <div class="tab-content pt-3">
-                <div class="tab-pane fade show active" id="tab_cols"><div id="md_cols"></div></div>
-                <div class="tab-pane fade" id="tab_quality"><div id="md_quality"></div></div>
-                <div class="tab-pane fade" id="tab_lineage"><canvas id="md_lineage" class="lineage"></canvas></div>
-              </div>
-            </div>
-            <div class="modal-footer"><button class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Data Lineage Viewer -->
-    <section data-route="lineage" class="hidden">
-      <div class="toolbar d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0"><i class="bi bi-diagram-3 me-2"></i>Data Lineage</h4>
-        <button class="btn btn-outline-light btn-sm" id="ln_reset">Reset</button>
-      </div>
-      <div class="card"><div class="card-body">
-        <canvas id="ln_canvas" class="lineage"></canvas>
-      </div></div>
-    </section>
-
-    <!-- Quality Dashboard -->
-    <section data-route="quality" class="hidden">
-      <div class="toolbar d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0"><i class="bi bi-clipboard2-data me-2"></i>Quality Dashboard</h4>
-        <button class="btn btn-primary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#ocRule"><i class="bi bi-plus-lg"></i> Nueva regla</button>
-      </div>
-      <div class="row g-3 mb-3">
-        <div class="col-md-4"><div class="card p-3"><div class="text-secondary small">Reglas</div><div class="h3" id="kpiRules">0</div><canvas id="q_spark_rules" class="spark mt-2"></canvas></div></div>
-        <div class="col-md-4"><div class="card p-3"><div class="text-secondary small">% Aprobación (7d)</div><div class="h3" id="kpiPass">0%</div><canvas id="q_spark_pass" class="spark mt-2"></canvas></div></div>
-        <div class="col-md-4"><div class="card p-3"><div class="text-secondary small">Incidencias abiertas</div><div class="h3" id="kpiInc">0</div><canvas id="q_spark_inc" class="spark mt-2"></canvas></div></div>
-      </div>
-      <div class="card"><div class="card-body">
-        <div class="table-responsive">
-          <table class="table align-middle" id="q_tbl"><thead><tr><th>Regla</th><th>Dominio</th><th>Dataset</th><th>Campo</th><th>Severidad</th><th>Estado</th><th>Última corrida</th><th>Resultado</th><th>Fallos</th><th class="text-end">Acciones</th></tr></thead><tbody></tbody></table>
-        </div>
-      </div></div>
-    </section>
-
-    <!-- Reglas Builder -->
-    <section data-route="rule-builder" class="hidden">
-      <div class="toolbar d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0"><i class="bi bi-tools me-2"></i>Reglas de Calidad – Builder</h4>
-        <button class="btn btn-outline-light btn-sm" id="rb_preview"><i class="bi bi-eye"></i> Previsualizar JSON</button>
-      </div>
-      <div class="card"><div class="card-body">
-        <div class="row g-3">
-          <div class="col-md-4">
-            <label class="form-label">Dataset</label>
-            <input id="rb_dataset" class="form-control" list="dlDatasets" placeholder="p.ej. clientes" />
-            <datalist id="dlDatasets"></datalist>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Campo</label>
-            <input id="rb_field" class="form-control" placeholder="p.ej. email" />
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Tipo de Regla</label>
-            <select id="rb_type" class="form-select">
-              <option>Completitud</option>
-              <option>Unicidad</option>
-              <option>Rango</option>
-              <option>Formato</option>
-              <option>Referencia</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Condición / Expresión</label>
-            <input id="rb_expr" class="form-control" placeholder="NOT NULL, regex, BETWEEN, IN…" />
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Severidad</label>
-            <select id="rb_sev" class="form-select"><option>Baja</option><option>Media</option><option>Alta</option><option>Crítica</option></select>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Umbral mínimo (%)</label>
-            <input id="rb_thr" type="number" min="0" max="100" value="95" class="form-control" />
-          </div>
-          <div class="col-md-2 d-grid">
-            <label class="form-label">&nbsp;</label>
-            <button class="btn btn-primary" id="rb_add">Agregar</button>
-          </div>
-        </div>
-      </div></div>
-      <div class="card mt-3"><div class="card-body">
-        <h6 class="mb-3">Reglas</h6>
-        <pre class="mb-0" id="rb_json" style="white-space:pre-wrap"></pre>
-      </div></div>
-    </section>
-
-    <!-- Políticas y Estándares -->
-    <section data-route="policies" class="hidden">
-      <div class="toolbar d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0"><i class="bi bi-journal-check me-2"></i>Políticas & Estándares</h4>
+<main class="main-content">
+    <!-- SECTION: GLOSSARY -->
+    <section id="glossary" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="m-0"><i class="bi bi-journal-text me-2"></i>Business Glossary</h4>
         <div>
-          <button class="btn btn-outline-light btn-sm" id="pl_new"><i class="bi bi-plus-lg"></i> Nueva</button>
+          <button id="g_export_csv" class="btn btn-sm btn-outline-light"><i class="bi bi-filetype-csv"></i> CSV</button>
+          <button id="g_export_json" class="btn btn-sm btn-outline-light"><i class="bi bi-filetype-json"></i> JSON</button>
+          <label class="btn btn-sm btn-outline-light mb-0"><i class="bi bi-upload"></i> Importar<input type="file" id="g_import" class="d-none" accept="application/json"></label>
+          <button id="g_new" class="btn btn-sm btn-primary" data-bs-toggle="offcanvas" data-bs-target="#ocGlossary"><i class="bi bi-plus-lg"></i> Nuevo</button>
         </div>
       </div>
-      <div class="row g-3">
-        <div class="col-md-4">
-          <div class="card"><div class="card-body">
-            <input id="pl_q" class="form-control mb-2" placeholder="Buscar…">
-            <div class="list-group" id="pl_list"></div>
-          </div></div>
+      <div class="card mb-3"><div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4"><input id="g_q" class="form-control" placeholder="Buscar término, definición, dueño…"></div>
+          <div class="col-md-3"><select id="g_domain_filter" class="form-select"><option value="">Todos los dominios</option></select></div>
+          <div class="col-md-3"><select id="g_sens_filter" class="form-select"><option value="">Todas las sensibilidades</option><option>Público</option><option>Interno</option><option>Confidencial</option><option>Alto Secreto</option></select></div>
+          <div class="col-md-2"><select id="g_status_filter" class="form-select"><option value="">Todos</option><option>Vigente</option><option>Borrador</option><option>Obsoleto</option></select></div>
         </div>
-        <div class="col-md-8">
-          <div class="card"><div class="card-body">
-            <h5 id="pl_title">Selecciona una política</h5>
-            <div class="small text-secondary" id="pl_meta"></div>
-            <hr/>
-            <div id="pl_content" style="min-height:220px"></div>
-            <hr/>
-            <h6>Cambios</h6>
-            <pre id="pl_diff" class="mb-0"></pre>
-          </div></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Matriz RACI -->
-    <section data-route="raci" class="hidden">
-      <div class="toolbar d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0"><i class="bi bi-grid-1x2 me-2"></i>Matriz RACI</h4>
-        <button class="btn btn-outline-light btn-sm" id="raci_export"><i class="bi bi-filetype-csv"></i> CSV</button>
-      </div>
+      </div></div>
       <div class="card"><div class="card-body table-responsive">
-        <table class="table align-middle" id="raci_tbl">
-          <thead><tr><th>Proceso</th><th>Artefacto</th><th>Rol A</th><th>Rol B</th><th>Rol C</th><th>Rol I</th></tr></thead>
+        <table class="table align-middle" id="g_tbl">
+          <thead><tr><th>Término</th><th>Definición</th><th>Dominio</th><th>Dueño</th><th>Sensibilidad</th><th>Estado</th><th>Actualizado</th><th class="text-end">Acciones</th></tr></thead>
           <tbody></tbody>
         </table>
       </div></div>
     </section>
 
-    <!-- Acceso a Datos -->
-    <section data-route="access" class="hidden">
-      <div class="toolbar d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0"><i class="bi bi-key me-2"></i>Solicitudes de Acceso</h4>
-        <button class="btn btn-outline-light btn-sm" id="ac_new"><i class="bi bi-plus-lg"></i> Nueva solicitud</button>
+    <!-- SECTION: CATALOG -->
+    <section id="catalog" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="m-0"><i class="bi bi-collection me-2"></i>Data Catalog</h4>
+        <div>
+          <button id="c_new" class="btn btn-sm btn-primary" data-bs-toggle="offcanvas" data-bs-target="#ocDataset"><i class="bi bi-plus-lg"></i> Nuevo Dataset</button>
+        </div>
+      </div>
+      <div class="card mb-3"><div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4"><input id="c_q" class="form-control" placeholder="Buscar dataset, columna…"></div>
+          <div class="col-md-3"><select id="c_domain_filter" class="form-select"><option value="">Todos los dominios</option></select></div>
+          <div class="col-md-3"><select id="c_sens_filter" class="form-select"><option value="">Todas las sensibilidades</option><option>Público</option><option>Interno</option><option>Confidencial</option><option>Alto Secreto</option></select></div>
+          <div class="col-md-2"><select id="c_pii_filter" class="form-select"><option value="">Tipo</option><option value="pii">Solo PII</option><option value="npii">Sin PII</option></select></div>
+        </div>
+      </div></div>
+      <div id="c_grid" class="row g-3"></div>
+    </section>
+
+    <!-- SECTION: QUALITY -->
+    <section id="quality" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="m-0"><i class="bi bi-clipboard2-data me-2"></i>Quality Dashboard</h4>
+        <button id="q_new" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#mdlBuilder"><i class="bi bi-plus-lg"></i> Nueva Regla</button>
+      </div>
+       <div class="row g-3 mb-3">
+        <div class="col-md-4"><div class="card p-3"><div class="text-secondary small">Reglas</div><div class="h3" id="q_kpi_rules">0</div></div></div>
+        <div class="col-md-4"><div class="card p-3"><div class="text-secondary small">% Aprobación (7d)</div><div class="h3" id="q_kpi_pass">0%</div></div></div>
+        <div class="col-md-4"><div class="card p-3"><div class="text-secondary small">Incidencias abiertas</div><div class="h3" id="q_kpi_inc">0</div></div></div>
+      </div>
+      <div class="card"><div class="card-body table-responsive">
+        <table class="table align-middle" id="q_tbl">
+          <thead><tr><th>Regla</th><th>Dominio</th><th>Dataset</th><th>Campo</th><th>Severidad</th><th>Estado</th><th>Última corrida</th><th>Resultado</th><th>Fallos</th><th class="text-end">Acciones</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div></div>
+    </section>
+
+    <!-- SECTION: POLICIES -->
+    <section id="policies" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="m-0"><i class="bi bi-file-earmark-text me-2"></i>Políticas & Estándares</h4>
+        <button id="p_new" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Nueva</button>
       </div>
       <div class="row g-3">
         <div class="col-md-4">
           <div class="card"><div class="card-body">
-            <div id="ac_form"></div>
+            <input id="p_q" class="form-control mb-2" placeholder="Buscar...">
+            <div id="p_list" class="list-group"></div>
+          </div></div>
+        </div>
+        <div class="col-md-8">
+          <div class="card"><div class="card-body">
+            <h5 id="p_title">Selecciona una política</h5>
+            <div class="small text-secondary" id="p_meta"></div>
+            <hr/>
+            <div id="p_content" style="min-height:200px"></div>
+            <hr/>
+            <h6>Changelog</h6>
+            <pre id="p_diff" class="mb-0"></pre>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: RACI -->
+    <section id="raci" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="m-0"><i class="bi bi-grid-1x2 me-2"></i>Matriz RACI</h4>
+        <button id="raci_export" class="btn btn-sm btn-outline-light"><i class="bi bi-filetype-csv"></i> Exportar CSV</button>
+      </div>
+      <div class="card"><div class="card-body table-responsive">
+        <table class="table align-middle" id="raci_tbl">
+          <thead><tr><th>Proceso</th><th>Artefacto</th><th>R</th><th>A</th><th>C</th><th>I</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div></div>
+    </section>
+
+    <!-- SECTION: ACCESS REQUESTS -->
+    <section id="access" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="m-0"><i class="bi bi-key me-2"></i>Solicitudes de Acceso</h4>
+        <button id="a_new" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Nueva</button>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="card"><div class="card-body">
+            <div id="a_form"></div>
           </div></div>
         </div>
         <div class="col-md-8">
           <div class="card"><div class="card-body">
             <div class="table-responsive">
-              <table class="table align-middle" id="ac_tbl"><thead><tr><th>ID</th><th>Solicitante</th><th>Recurso</th><th>Estado</th><th>SLA</th><th class="text-end">Acciones</th></tr></thead><tbody></tbody></table>
+              <table class="table align-middle" id="a_tbl">
+                <thead><tr><th>ID</th><th>Solicitante</th><th>Recurso</th><th>Estado</th><th>SLA</th><th class="text-end">Acciones</th></tr></thead>
+                <tbody></tbody>
+              </table>
             </div>
           </div></div>
         </div>
       </div>
     </section>
 
-    <!-- DPIA -->
-    <section data-route="dpia" class="hidden">
-      <div class="toolbar d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0"><i class="bi bi-shield-lock me-2"></i>DPIA – Evaluación de Impacto</h4>
-        <button class="btn btn-outline-light btn-sm" id="dp_new"><i class="bi bi-plus-lg"></i> Nueva evaluación</button>
+    <!-- SECTION: DPIA -->
+    <section id="dpia" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="m-0"><i class="bi bi-shield-lock me-2"></i>DPIA – Evaluación de Impacto</h4>
+        <button id="dp_new" class="btn btn-sm btn-outline-light"><i class="bi bi-arrow-repeat"></i> Reset</button>
       </div>
       <div class="card"><div class="card-body">
         <div class="row g-3">
@@ -312,50 +218,47 @@
       </div></div>
     </section>
 
-    <!-- Retención -->
-    <section data-route="retention" class="hidden">
-      <div class="toolbar d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0"><i class="bi bi-calendar2-week me-2"></i>Retención & Disposición</h4>
-        <button class="btn btn-outline-light btn-sm" id="rt_new"><i class="bi bi-plus-lg"></i> Nuevo registro</button>
+    <!-- SECTION: RETENTION -->
+    <section id="retention" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="m-0"><i class="bi bi-calendar3 me-2"></i>Retención & Disposición</h4>
+        <button id="rt_new" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Nuevo registro</button>
       </div>
       <div class="row g-3">
         <div class="col-md-5">
           <div class="card"><div class="card-body">
-            <div class="table-responsive"><table class="table" id="rt_tbl"><thead><tr><th>Dominio</th><th>Tabla</th><th>Acción</th><th>Fecha</th></tr></thead><tbody></tbody></table></div>
+            <div class="table-responsive">
+              <table class="table" id="rt_tbl"><thead><tr><th>Dominio</th><th>Tabla</th><th>Acción</th><th>Fecha</th></tr></thead><tbody></tbody></table>
+            </div>
           </div></div>
         </div>
         <div class="col-md-7">
           <div class="card"><div class="card-body">
-            <div id="rt_calendar" class="calendar"></div>
+            <div id="rt_calendar" class="row row-cols-7 g-2"></div>
           </div></div>
         </div>
       </div>
     </section>
 
-    <!-- Kanban Incidencias -->
-    <section data-route="kanban" class="hidden">
-      <div class="toolbar d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0"><i class="bi bi-kanban me-2"></i>Incidencias de Datos</h4>
-        <button class="btn btn-outline-light btn-sm" id="kb_new"><i class="bi bi-plus-lg"></i> Nueva incidencia</button>
+    <!-- SECTION: KANBAN (Issues) -->
+    <section id="kanban" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="m-0"><i class="bi bi-columns-gap me-2"></i>Incidencias de Datos</h4>
+        <button id="k_new" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Nueva incidencia</button>
       </div>
-      <div class="row g-3">
-        <div class="col-md-4">
-          <div class="card"><div class="card-body drag-col" id="kb_backlog" data-col="Backlog"><h6>Backlog</h6></div></div>
-        </div>
-        <div class="col-md-4">
-          <div class="card"><div class="card-body drag-col" id="kb_inprog" data-col="En Progreso"><h6>En Progreso</h6></div></div>
-        </div>
-        <div class="col-md-4">
-          <div class="card"><div class="card-body drag-col" id="kb_done" data-col="Hecho"><h6>Hecho</h6></div></div>
-        </div>
+      <div class="kanban">
+        <div class="kanban-col" id="k_backlog" data-col="Backlog"><h6>Backlog <span class="badge text-bg-secondary" id="k_b_count">0</span></h6></div>
+        <div class="kanban-col" id="k_progress" data-col="En Progreso"><h6>En Progreso <span class="badge text-bg-info" id="k_p_count">0</span></h6></div>
+        <div class="kanban-col" id="k_review" data-col="En Revisión"><h6>En Revisión <span class="badge text-bg-warning" id="k_r_count">0</span></h6></div>
+        <div class="kanban-col" id="k_done" data-col="Hecho"><h6>Hecho <span class="badge text-bg-success" id="k_d_count">0</span></h6></div>
       </div>
     </section>
 
-    <!-- Data Contract Builder -->
-    <section data-route="contracts" class="hidden">
-      <div class="toolbar d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0"><i class="bi bi-braces-asterisk me-2"></i>Data Contracts</h4>
-        <button class="btn btn-outline-light btn-sm" id="ct_validate"><i class="bi bi-check2-circle"></i> Validar</button>
+    <!-- SECTION: CONTRACTS -->
+    <section id="contracts" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="m-0"><i class="bi bi-braces-asterisk me-2"></i>Data Contracts</h4>
+        <button id="ct_validate" class="btn btn-sm btn-outline-light"><i class="bi bi-check2-circle"></i> Validar</button>
       </div>
       <div class="row g-3">
         <div class="col-md-6">
@@ -373,20 +276,20 @@
       </div>
     </section>
 
-    <!-- Mapa de Dominios -->
-    <section data-route="domains" class="hidden">
-      <div class="toolbar d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0"><i class="bi bi-map me-2"></i>Mapa de Dominios & Productos</h4>
-        <button class="btn btn-outline-light btn-sm" id="dm_refresh"><i class="bi bi-arrow-repeat"></i> Refresh</button>
+    <!-- SECTION: DOMAINS MAP -->
+    <section id="domains" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="m-0"><i class="bi bi-diagram-3-center me-2"></i>Mapa de Dominios & Productos</h4>
+        <button id="dm_refresh" class="btn btn-sm btn-outline-light"><i class="bi bi-arrow-repeat"></i> Refresh</button>
       </div>
       <div class="row g-3" id="dm_grid"></div>
     </section>
 
-    <!-- Training -->
-    <section data-route="training" class="hidden">
-      <div class="toolbar d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0"><i class="bi bi-mortarboard me-2"></i>Entrenamiento & Certificación</h4>
-        <button class="btn btn-outline-light btn-sm" id="tr_start"><i class="bi bi-play-circle"></i> Empezar Quiz</button>
+    <!-- SECTION: TRAINING -->
+    <section id="training" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="m-0"><i class="bi bi-mortarboard me-2"></i>Entrenamiento & Certificación</h4>
+        <button id="tr_start" class="btn btn-sm btn-outline-light"><i class="bi bi-play-circle"></i> Empezar Quiz</button>
       </div>
       <div class="row g-3">
         <div class="col-md-6">
@@ -398,432 +301,867 @@
       </div>
     </section>
 
-    <!-- Data Sharing -->
-    <section data-route="sharing" class="hidden">
-      <div class="toolbar d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0"><i class="bi bi-people me-2"></i>Acuerdos de Compartición</h4>
-        <button class="btn btn-outline-light btn-sm" id="sh_new"><i class="bi bi-plus-lg"></i> Nuevo acuerdo</button>
+    <!-- SECTION: SHARING -->
+    <section id="sharing" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="m-0"><i class="bi bi-people me-2"></i>Data Sharing Agreements</h4>
+        <button id="sh_new" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Nuevo acuerdo</button>
       </div>
       <div class="card"><div class="card-body">
-        <div class="table-responsive"><table class="table" id="sh_tbl"><thead><tr><th>Nombre</th><th>Partes</th><th>Confidencialidad</th><th>Vigencia</th><th>Estado</th></tr></thead><tbody></tbody></table></div>
+        <div class="table-responsive">
+          <table class="table" id="sh_tbl"><thead><tr><th>Nombre</th><th>Partes</th><th>Confidencialidad</th><th>Vigencia</th><th>Estado</th></tr></thead><tbody></tbody></table>
+        </div>
       </div></div>
     </section>
 
-  </main>
-
-  <!-- Offcanvas Glossary Editor -->
-  <div class="offcanvas offcanvas-end" tabindex="-1" id="ocGlossary">
-    <div class="offcanvas-header"><h5 class="offcanvas-title">Término</h5><button class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button></div>
-    <div class="offcanvas-body">
-      <form id="gl_form" class="needs-validation" novalidate>
-        <input type="hidden" id="gl_id" />
-        <div class="mb-2"><label class="form-label">Término</label><input id="gl_name" class="form-control" required /></div>
-        <div class="mb-2"><label class="form-label">Definición</label><textarea id="gl_def" class="form-control" rows="3" required></textarea></div>
-        <div class="row g-2">
-          <div class="col-md-6"><label class="form-label">Dominio</label><input id="gl_dom" class="form-control" list="gl_dlDomains" required><datalist id="gl_dlDomains"></datalist></div>
-          <div class="col-md-6"><label class="form-label">Dueño</label><input id="gl_owner" class="form-control" required></div>
-          <div class="col-md-6"><label class="form-label">Sensibilidad</label><select id="gl_sens_sel" class="form-select" required><option>Público</option><option>Interno</option><option>Confidencial</option><option>Alto Secreto</option></select></div>
-          <div class="col-md-6"><label class="form-label">Estado</label><select id="gl_status_sel" class="form-select" required><option>Vigente</option><option>Borrador</option><option>Obsoleto</option></select></div>
+    <!-- SECTION: SETTINGS -->
+    <section id="settings" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="m-0"><i class="bi bi-gear me-2"></i>Ajustes / Mock API / I18N</h4>
+      </div>
+      <div class="card"><div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="s_mock" checked>
+              <label class="form-check-label" for="s_mock">Mock API activado</label>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <select id="s_lang" class="form-select" style="max-width:220px">
+              <option value="es">Español</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <button id="s_clear" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Limpiar LocalStorage</button>
+          </div>
         </div>
-        <div class="mt-3 d-flex gap-2"><button class="btn btn-primary" type="submit">Guardar</button><button class="btn btn-outline-light" type="button" data-bs-dismiss="offcanvas">Cancelar</button></div>
-      </form>
+      </div></div>
+    </section>
+</main>
+
+<!-- Offcanvas, Modals, Toasts -->
+<!-- Offcanvas: Glossary Editor -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="ocGlossary">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title"><i class="bi bi-pencil-square me-2"></i>Término</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <form id="g_form" class="needs-validation" novalidate>
+      <input type="hidden" id="g_id"/>
+      <div class="mb-2">
+        <label class="form-label">Término</label>
+        <input id="g_name" class="form-control" required maxlength="80">
+        <div class="invalid-feedback">Obligatorio</div>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Definición</label>
+        <textarea id="g_def" class="form-control" rows="4" required maxlength="500"></textarea>
+        <div class="invalid-feedback">Obligatorio</div>
+      </div>
+      <div class="row g-2">
+        <div class="col-md-6">
+          <label class="form-label">Dominio</label>
+          <input id="g_dom" class="form-control" list="g_dlDomains" required>
+          <datalist id="g_dlDomains"></datalist>
+          <div class="invalid-feedback">Obligatorio</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Dueño</label>
+          <input id="g_owner" class="form-control" required>
+          <div class="invalid-feedback">Obligatorio</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Sensibilidad</label>
+          <select id="g_sens_sel" class="form-select" required>
+            <option>Público</option><option>Interno</option>
+            <option>Confidencial</option><option>Alto Secreto</option>
+          </select>
+          <div class="invalid-feedback">Obligatorio</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Estado</label>
+          <select id="g_status_sel" class="form-select" required>
+            <option>Vigente</option><option>Borrador</option><option>Obsoleto</option>
+          </select>
+          <div class="invalid-feedback">Obligatorio</div>
+        </div>
+      </div>
+      <div class="d-flex gap-2 mt-3">
+        <button class="btn btn-primary" type="submit"><i class="bi bi-save2"></i> Guardar</button>
+        <button class="btn btn-outline-light" type="button" data-bs-dismiss="offcanvas">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Offcanvas: Dataset Editor -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="ocDataset">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title"><i class="bi bi-database-gear me-2"></i>Dataset</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <form id="c_form" class="needs-validation" novalidate>
+      <input type="hidden" id="c_id_edit">
+      <div class="mb-2">
+        <label class="form-label">Nombre</label>
+        <input id="c_name" class="form-control" required maxlength="80">
+        <div class="invalid-feedback">Obligatorio</div>
+      </div>
+      <div class="row g-2">
+        <div class="col-md-6">
+          <label class="form-label">Dominio</label>
+          <input id="c_dom_in" class="form-control" required list="c_dlDomains">
+          <datalist id="c_dlDomains"></datalist>
+          <div class="invalid-feedback">Obligatorio</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Sensibilidad</label>
+          <select id="c_sens_in" class="form-select" required>
+            <option>Público</option><option>Interno</option>
+            <option>Confidencial</option><option>Alto Secreto</option>
+          </select>
+          <div class="invalid-feedback">Obligatorio</div>
+        </div>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Etiquetas (coma)</label>
+        <input id="c_tags_in" class="form-control" placeholder="PII, Crítico, ...">
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Columnas</label>
+        <div class="input-group mb-2">
+          <input id="c_col_name" class="form-control" placeholder="nombre">
+          <select id="c_col_type" class="form-select" style="max-width:180px">
+            <option>string</option><option>int</option><option>decimal</option><option>date</option><option>bool</option>
+          </select>
+          <button class="btn btn-outline-light" type="button" id="c_col_add"><i class="bi bi-plus-lg"></i></button>
+        </div>
+        <div id="c_cols_list" class="small"></div>
+      </div>
+      <div class="d-flex gap-2">
+        <button class="btn btn-primary" type="submit"><i class="bi bi-save2"></i> Guardar</button>
+        <button class="btn btn-outline-light" type="button" data-bs-dismiss="offcanvas">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Dataset Detail (tabs columnas/calidad/lineage) -->
+<div class="modal fade" id="mdDataset" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-database me-2"></i><span id="md_title">Dataset</span></h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab_cols" type="button">Columnas</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_quality" type="button">Calidad</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_lineage" type="button">Lineage</button></li>
+        </ul>
+        <div class="tab-content pt-3">
+          <div class="tab-pane fade show active" id="tab_cols"><div id="md_cols"></div></div>
+          <div class="tab-pane fade" id="tab_quality"><div id="md_quality"></div></div>
+          <div class="tab-pane fade" id="tab_lineage"><canvas id="md_lineage" style="width:100%;height:360px;"></canvas></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button></div>
     </div>
   </div>
+</div>
 
-  <!-- Toast -->
-  <div class="position-fixed bottom-0 end-0 p-3" style="z-index:1100">
-    <div id="toast" class="toast text-bg-dark" role="alert" aria-live="assertive" aria-atomic="true"><div class="toast-body" id="toastMsg"></div></div>
+<!-- Modal: Builder Wizard (Reglas de Calidad) -->
+<div class="modal fade" id="mdlBuilder" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-sliders2 me-2"></i>Nueva Regla</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Dataset</label>
+            <input id="b_ds" class="form-control" list="b_dlDatasets">
+            <datalist id="b_dlDatasets"></datalist>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Campo</label>
+            <input id="b_field" class="form-control">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Tipo</label>
+            <select id="b_type" class="form-select">
+              <option>Completitud</option><option>Unicidad</option>
+              <option>Rango</option><option>Formato</option><option>Referencia</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Condición / Expresión</label>
+            <input id="b_expr" class="form-control" placeholder="NOT NULL, regex, BETWEEN…">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Severidad</label>
+            <select id="b_sev" class="form-select"><option>Baja</option><option>Media</option><option>Alta</option><option>Crítica</option></select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Umbral (%)</label>
+            <input id="b_thr" type="number" min="0" max="100" value="95" class="form-control">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="b_add" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Agregar</button>
+        <button class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
   </div>
+</div>
 
-  <script>
-  /**********************
-   * Mini Store & I18N  *
-   **********************/
-  const $ = (s)=>document.querySelector(s); const $$=(s)=>document.querySelectorAll(s);
+<!-- Toasts -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="toast" class="toast text-bg-dark" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-body" id="toastMsg"></div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /************* Utils & Storage *************/
+  const $ = (s)=>document.querySelector(s);
+  const $$ = (s)=>document.querySelectorAll(s);
   const Toast = (m)=>{ $('#toastMsg').textContent=m; bootstrap.Toast.getOrCreateInstance('#toast',{delay:1600}).show(); };
   const Storage = {
-    get: (k, d)=>{ try{ return JSON.parse(localStorage.getItem(k)) ?? d; }catch(_){ return d; } },
-    set: (k, v)=>localStorage.setItem(k, JSON.stringify(v))
-  };
-  const i18n = {
-    es: { searchModule:'Buscar módulo', new:'Nuevo', save:'Guardar', cancel:'Cancelar' },
-    en: { searchModule:'Search module', new:'New', save:'Save', cancel:'Cancel' }
+    get:(k,d)=>{ try{ return JSON.parse(localStorage.getItem(k)) ?? d; }catch(_){ return d; } },
+    set:(k,v)=> localStorage.setItem(k, JSON.stringify(v))
   };
 
-  /**********************
-   * Router + Sidebar   *
-   **********************/
-  const MODULES = [
-    { route:'glossary', icon:'bi-journal-text', label:'Business Glossary' },
-    { route:'catalog', icon:'bi-collection', label:'Data Catalog' },
-    { route:'lineage', icon:'bi-diagram-3', label:'Data Lineage' },
-    { route:'quality', icon:'bi-clipboard2-data', label:'Quality Dashboard' },
-    { route:'rule-builder', icon:'bi-tools', label:'Reglas Builder' },
-    { route:'policies', icon:'bi-journal-check', label:'Políticas & Estándares' },
-    { route:'raci', icon:'bi-grid-1x2', label:'Matriz RACI' },
-    { route:'access', icon:'bi-key', label:'Acceso a Datos' },
-    { route:'dpia', icon:'bi-shield-lock', label:'DPIA' },
-    { route:'retention', icon:'bi-calendar2-week', label:'Retención' },
-    { route:'kanban', icon:'bi-kanban', label:'Incidencias (Kanban)' },
-    { route:'contracts', icon:'bi-braces-asterisk', label:'Data Contracts' },
-    { route:'domains', icon:'bi-map', label:'Mapa de Dominios' },
-    { route:'training', icon:'bi-mortarboard', label:'Entrenamiento' },
-    { route:'sharing', icon:'bi-people', label:'Data Sharing' },
-  ];
-
-  function buildSidebar(){
-    $('#navList').innerHTML = MODULES.map(m=>`<a href="#${m.route}" class="list-group-item list-group-item-action bg-transparent text-light d-flex align-items-center gap-2"><i class="bi ${m.icon}"></i><span>${m.label}</span></a>`).join('');
+  /************* Router *************/
+  function activate(sectionId){
+    $$('.section').forEach(s=>s.classList.remove('active'));
+    const el = $('#'+sectionId) || $('#glossary');
+    el.classList.add('active');
+    // Marcar menú
+    $$('#menu a[data-section]').forEach(a=>a.classList.remove('active-item'));
+    const item = document.querySelector('#menu a[data-section="'+sectionId+'"]');
+    item && item.classList.add('active-item');
   }
-  function showRoute(route){
-    $$('main section').forEach(s=>s.classList.add('hidden'));
-    const sec = document.querySelector(`section[data-route="${route}"]`) || document.querySelector('section[data-route]');
-    sec?.classList.remove('hidden');
+  function go(hash){
+    const id = (hash||'').replace('#','') || 'glossary';
+    history.replaceState(null,'','#'+id);
+    activate(id);
   }
-  window.addEventListener('hashchange', ()=> showRoute(location.hash.replace('#','')||'glossary'));
+  window.addEventListener('hashchange', ()=> activate(location.hash.replace('#','')||'glossary'));
 
-  /**********************
-   * Glossary Module    *
-   **********************/
-  const GL_KEY = 'suite_glossary_v1';
-  const glSeed = [
-    {id:crypto.randomUUID(), term:'Cliente', definition:'Persona natural o jurídica que contrata productos y servicios.', domain:'Personas', owner:'Steward Personas', sensitivity:'Interno', status:'Vigente', updatedAt:new Date().toISOString()},
-    {id:crypto.randomUUID(), term:'Póliza', definition:'Contrato que establece coberturas y condiciones de seguro.', domain:'Seguros', owner:'Steward Pólizas', sensitivity:'Confidencial', status:'Vigente', updatedAt:new Date().toISOString()},
-    {id:crypto.randomUUID(), term:'Siniestro', definition:'Evento que activa el proceso de pago definido en la póliza.', domain:'Siniestros', owner:'Steward Siniestros', sensitivity:'Confidencial', status:'Vigente', updatedAt:new Date().toISOString()}
-  ];
-  const glStore = { data: Storage.get(GL_KEY, glSeed), filters:{q:'',dom:'',sens:'',st:''} };
-  function glBadgeSens(s){ const m={Público:'success',Interno:'secondary',Confidencial:'warning',"Alto Secreto":'danger'}; return `<span class="badge text-bg-${m[s]||'light'}">${s}</span>`; }
-  function glChipStatus(s){ const m={Vigente:'success',Borrador:'info',Obsoleto:'secondary'}; return `<span class="chip">${s}</span>`; }
-  function glFmt(d){ return new Date(d).toLocaleDateString('es-PE',{year:'numeric',month:'short',day:'2-digit'}); }
-  function glRefreshDomains(){ const ds=[...new Set(glStore.data.map(x=>x.domain))].sort(); $('#gl_domain').innerHTML='<option value="">Todos</option>'+ds.map(d=>`<option>${d}</option>`).join(''); $('#gl_dlDomains').innerHTML=ds.map(d=>`<option value="${d}"></option>`).join(''); }
-  function glApply(){ const n=t=> (t||'').toString().toLowerCase(); let list=[...glStore.data]; const f=glStore.filters; if(f.q){ const q=n(f.q); list=list.filter(x=>[x.term,x.definition,x.domain,x.owner].some(v=>n(v).includes(q))); } if(f.dom) list=list.filter(x=>x.domain===f.dom); if(f.sens) list=list.filter(x=>x.sensitivity===f.sens); if(f.st) list=list.filter(x=>x.status===f.st); return list.sort((a,b)=> a.term.localeCompare(b.term,'es')); }
-  function glRender(){ const tb=$('#gl_tbl tbody'); const list=glApply(); tb.innerHTML=list.map(x=>`<tr><td><strong>${x.term}</strong></td><td><span class="truncate" title="${x.definition}">${x.definition}</span></td><td><span class="badge rounded-pill text-bg-primary">${x.domain}</span></td><td>${x.owner}</td><td>${glBadgeSens(x.sensitivity)}</td><td>${glChipStatus(x.status)}</td><td>${glFmt(x.updatedAt)}</td><td class="text-end"><div class="btn-group btn-group-sm"><button class="btn btn-outline-light" onclick='glOpen("${x.id}")'><i class="bi bi-pencil"></i></button><button class="btn btn-outline-danger" onclick='glDel("${x.id}")'><i class="bi bi-trash"></i></button></div></td></tr>`).join(''); }
-  function glOpen(id){ const e=id? glStore.data.find(x=>x.id===id):null; $('#gl_id').value=e?e.id:''; $('#gl_name').value=e?e.term:''; $('#gl_def').value=e?e.definition:''; $('#gl_dom').value=e?e.domain:''; $('#gl_owner').value=e?e.owner:''; $('#gl_sens_sel').value=e?e.sensitivity:'Interno'; $('#gl_status_sel').value=e?e.status:'Vigente'; bootstrap.Offcanvas.getOrCreateInstance('#ocGlossary').show(); }
-  function glDel(id){ if(!confirm('¿Eliminar término?')) return; glStore.data=glStore.data.filter(x=>x.id!==id); Storage.set(GL_KEY,glStore.data); glRefreshDomains(); glRender(); Toast('Término eliminado'); }
-
-  /**********************
-   * Data Catalog       *
-   **********************/
-  const DC_KEY='suite_catalog_v1';
-  const dcSeed=[
-    { id:'clientes', title:'Clientes', domain:'Personas', sensitivity:'PII', cols:[{name:'dni',type:'string',pii:true},{name:'email',type:'string',pii:true},{name:'edad',type:'int'}] },
-    { id:'polizas', title:'Pólizas', domain:'Seguros', sensitivity:'Confidencial', cols:[{name:'id',type:'string'},{name:'cobertura',type:'string'},{name:'fecha_inicio',type:'date'}] },
-    { id:'siniestros', title:'Siniestros', domain:'Siniestros', sensitivity:'Confidencial', cols:[{name:'id',type:'string'},{name:'monto',type:'decimal'},{name:'fecha',type:'date'}] }
-  ];
-  const dcStore={ data: Storage.get(DC_KEY,dcSeed), filters:{q:'',dom:'',sens:'',type:''}, collections: Storage.get('dc_collections',[]) };
-  function dcRefreshFilters(){ const ds=[...new Set(dcStore.data.map(x=>x.domain))].sort(); $('#dc_domain').innerHTML='<option value="">Todos</option>'+ds.map(d=>`<option>${d}</option>`).join(''); }
-  function dcApply(){ const n=t=>(t||'').toString().toLowerCase(); let list=[...dcStore.data]; const f=dcStore.filters; if(f.q){ const q=n(f.q); list=list.filter(x=> n(x.title).includes(q) || x.cols.some(c=>n(c.name).includes(q))); } if(f.dom) list=list.filter(x=>x.domain===f.dom); if(f.sens) list=list.filter(x=>x.sensitivity===f.sens); if(f.type==='pii') list=list.filter(x=> x.cols.some(c=>c.pii)); if(f.type==='npii') list=list.filter(x=> x.cols.every(c=>!c.pii)); return list; }
-  function dcRender(){ const grid=$('#dc_grid'); const list=dcApply(); grid.innerHTML=list.map(d=>`<div class="col-12 col-md-4"><div class="card h-100"><div class="card-body"><div class="d-flex justify-content-between"><h5 class="card-title">${d.title}</h5><span class="badge text-bg-primary">${d.domain}</span></div><div class="mb-2"><span class="badge ${d.sensitivity==='PII'?'text-bg-danger':'text-bg-secondary'}">${d.sensitivity}</span></div><div class="small text-secondary">${d.cols.length} columnas</div><div class="mt-2 d-flex gap-1 flex-wrap">${d.cols.slice(0,6).map(c=>`<span class="chip">${c.name}</span>`).join('')}</div></div><div class="card-footer d-flex justify-content-end gap-2"><button class="btn btn-outline-light btn-sm" onclick='dcOpen("${d.id}")'><i class="bi bi-box-arrow-up-right"></i> Abrir</button><button class="btn btn-outline-primary btn-sm" onclick='dcBookmark("${d.id}")'><i class="bi bi-bookmark"></i></button></div></div></div>`).join(''); }
-  function dcOpen(id){ const d=dcStore.data.find(x=>x.id===id); $('#md_title').textContent=d.title; $('#md_cols').innerHTML = `<div class='table-responsive'><table class='table'><thead><tr><th>Columna</th><th>Tipo</th><th>PII</th></tr></thead><tbody>${d.cols.map(c=>`<tr><td>${c.name}</td><td>${c.type}</td><td>${c.pii?'<span class="badge text-bg-danger">Sí</span>':'No'}</td></tr>`).join('')}</tbody></table></div>`; $('#md_quality').innerHTML = `<ul><li>Completitud: ${90+Math.floor(Math.random()*10)}%</li><li>Unicidad: ${95+Math.floor(Math.random()*5)}%</li></ul>`; const m = new bootstrap.Modal('#mdDataset'); m.show(); // lineage mini-draw
-    setTimeout(()=> drawLineage('#md_lineage', [ {x:60,y:160,l:'origen'}, {x:320,y:160,l:'transform'}, {x:580,y:160,l:'consumo'} ]), 150);
-  }
-  function dcBookmark(id){ if(!dcStore.collections.includes(id)){ dcStore.collections.push(id); Storage.set('dc_collections',dcStore.collections); Toast('Agregado a tu colección'); } }
-
-  /**********************
-   * Lineage Viewer     *
-   **********************/
-  function drawLineage(sel, nodes){ const c=document.querySelector(sel); if(!c) return; const ctx=c.getContext('2d'); const w=c.width=c.clientWidth; const h=c.height=c.clientHeight; ctx.clearRect(0,0,w,h); ctx.strokeStyle='#4da3ff'; ctx.lineWidth=2; nodes.forEach((n,i)=>{ if(i>0){ const p=nodes[i-1]; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(n.x,n.y); ctx.stroke(); } }); ctx.fillStyle='#e6ecff'; nodes.forEach(n=>{ ctx.beginPath(); ctx.arc(n.x,n.y,18,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#0f1a2b'; ctx.fillText(n.l, n.x-20, n.y+36); ctx.fillStyle='#e6ecff'; }); }
-
-  /**********************
-   * Quality Dashboard  *
-   **********************/
-  const DQ_KEY='suite_dq_v1';
-  const dqSeed=[
-    { id:crypto.randomUUID(), name:'Completitud Email', domain:'Personas', dataset:'clientes', field:'email', severity:'Media', status:'Activa', threshold:98, lastRun: daysAgo(1), result:'Aprobada', failures:12, desc:'No nulos en email' },
-    { id:crypto.randomUUID(), name:'Unicidad DNI', domain:'Personas', dataset:'clientes', field:'dni', severity:'Alta', status:'Activa', threshold:100, lastRun: daysAgo(1), result:'Fallida', failures:7, desc:'Sin duplicados en DNI' },
-    { id:crypto.randomUUID(), name:'Cobertura Obligatoria', domain:'Pólizas', dataset:'polizas', field:'cobertura', severity:'Crítica', status:'Activa', threshold:100, lastRun: daysAgo(1), result:'Fallida', failures:15, desc:'Debe existir cobertura básica' }
-  ];
-  const dqStore={ rules: Storage.get(DQ_KEY,dqSeed) };
-  function daysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString(); }
-  function fmtDT(d){ return new Date(d).toLocaleString('es-PE',{year:'numeric',month:'short',day:'2-digit',hour:'2-digit',minute:'2-digit'}); }
-  function dqBadgeSeverity(s){ const m={Baja:'success',Media:'info',Alta:'warning','Crítica':'danger'}; return `<span class="badge text-bg-${m[s]||'secondary'}">${s}</span>`; }
-  function dqRender(){ const tb=$('#q_tbl tbody'); tb.innerHTML=dqStore.rules.map(r=>`<tr><td><strong>${r.name}</strong><br><small class='text-secondary'>${r.desc||''}</small></td><td><span class='badge rounded-pill text-bg-primary'>${r.domain}</span></td><td>${r.dataset}</td><td>${r.field||'-'}</td><td>${dqBadgeSeverity(r.severity)}</td><td><span class='chip'>${r.status}</span></td><td>${fmtDT(r.lastRun)}</td><td>${r.result==='Aprobada'?'<span class="badge text-bg-success">Aprobada</span>':'<span class="badge text-bg-danger">Fallida</span>'}</td><td>${r.failures}</td><td class='text-end'><div class='btn-group btn-group-sm'><button class='btn btn-outline-light' onclick='dqEdit("${r.id}")'><i class="bi bi-pencil"></i></button><button class='btn btn-outline-danger' onclick='dqDel("${r.id}")'><i class="bi bi-trash"></i></button></div></td></tr>`).join(''); const inc=dqStore.rules.filter(r=>r.result==='Fallida'&&r.status==='Activa').length; $('#kpiInc').textContent=inc; $('#kpiRules').textContent=dqStore.rules.length; const pass=Math.round(100*(dqStore.rules.filter(r=>r.result==='Aprobada').length)/(dqStore.rules.length||1)); $('#kpiPass').textContent=pass+'%'; drawSpark('#q_spark_rules', seriesFromLength(dqStore.rules.length)); drawSpark('#q_spark_pass', lastDaysApproval(7)); drawSpark('#q_spark_inc', seriesIncidents(inc)); Storage.set(DQ_KEY,dqStore.rules); }
-  function seriesFromLength(n){ const base=Math.max(3,n-2); return Array.from({length:12},(_,i)=> base + Math.round(Math.sin(i/2)*2) + (i%3===0?1:0)); }
-  function lastDaysApproval(days){ const arr=[]; let seed=72; for(let i=days;i>0;i--){ seed=(seed*9301+49297)%233280; const jitter=(seed/233280)*12-6; let base=85+jitter; arr.push(Math.max(0,Math.min(100,base))); } return arr; }
-  function seriesIncidents(x){ const base=Math.max(0,x-1); return Array.from({length:12},(_,i)=> Math.max(0, base + (i%4===0?1:0) - (i%5===0?1:0))); }
-  function drawSpark(sel,data){ const c=document.querySelector(sel); if(!c) return; const ctx=c.getContext('2d'); const w=c.width=c.clientWidth; const h=c.height=c.clientHeight; ctx.clearRect(0,0,w,h); ctx.globalAlpha=.3; ctx.beginPath(); ctx.moveTo(0,h-1); ctx.lineTo(w,h-1); ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.stroke(); ctx.globalAlpha=1; if(!data.length) return; const min=Math.min(...data), max=Math.max(...data); const nx=i=> i*(w/(data.length-1)); const ny=v=> h - ((v-min)/(max-min||1))*h; ctx.beginPath(); data.forEach((v,i)=>{ const x=nx(i), y=ny(v); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }); ctx.lineWidth=2; ctx.strokeStyle='#4da3ff'; ctx.stroke(); const grad=ctx.createLinearGradient(0,0,0,h); grad.addColorStop(0,'rgba(77,163,255,.35)'); grad.addColorStop(1,'rgba(77,163,255,0)'); ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath(); ctx.fillStyle=grad; ctx.fill(); }
-  function dqEdit(id){ Toast('Editar no implementado (demo)'); }
-  function dqDel(id){ if(!confirm('¿Eliminar regla?')) return; dqStore.rules = dqStore.rules.filter(r=>r.id!==id); dqRender(); Toast('Regla eliminada'); }
-
-  /**********************
-   * Rule Builder       *
-   **********************/
-  const rbStore={ rules: [] };
-  function rbRender(){ $('#rb_json').textContent = JSON.stringify(rbStore.rules, null, 2); Storage.set('rb_rules', rbStore.rules); }
-
-  /**********************
-   * Policies           *
-   **********************/
-  const PL_KEY='suite_policies_v1';
-  const plSeed=[ {id:crypto.randomUUID(), title:'Política de Clasificación de Datos', status:'Vigente', version:2, content:'Niveles: Público, Interno, Confidencial, Alto Secreto.', history:['v1 creado','v2 ajustes de definiciones'], updatedAt:new Date().toISOString()}, {id:crypto.randomUUID(), title:'Estándar de Nombres de Tablas', status:'Borrador', version:1, content:'snake_case, prefijos por dominio, sin tildes.', history:['v1 creado'], updatedAt:new Date().toISOString()} ];
-  const plStore={ items: Storage.get(PL_KEY,plSeed), sel:null };
-  function plRenderList(){ const q=$('#pl_q').value?.toLowerCase()||''; $('#pl_list').innerHTML=plStore.items.filter(p=>p.title.toLowerCase().includes(q)).map(p=>`<button class='list-group-item list-group-item-action bg-transparent text-light text-start' onclick='plOpen("${p.id}")'><div class='d-flex justify-content-between'><span>${p.title}</span><span class='badge ${p.status==='Vigente'?'text-bg-success':p.status==='Borrador'?'text-bg-info':'text-bg-secondary'}'>${p.status}</span></div><small class='text-secondary'>v${p.version} · ${new Date(p.updatedAt).toLocaleDateString('es-PE')}</small></button>`).join(''); }
-  function plOpen(id){ const p=plStore.items.find(x=>x.id===id); plStore.sel=p; $('#pl_title').textContent=p.title; $('#pl_meta').textContent=`Estado: ${p.status} · v${p.version}`; $('#pl_content').textContent=p.content; // diff simple
-    $('#pl_diff').textContent = (p.history||[]).map(h=>`• ${h}`).join('\n'); }
-
-  /**********************
-   * RACI Matrix        *
-   **********************/
-  const RACI_KEY='suite_raci_v1';
-  const raciSeed=[ {process:'Alta de Producto de Datos', artifact:'Contrato de Datos', A:'Data Owner', B:'Steward', C:'Seguridad', I:'Arquitectura'} ];
-  const raciStore={ rows: Storage.get(RACI_KEY,raciSeed) };
-  function raciRender(){ $('#raci_tbl tbody').innerHTML = raciStore.rows.map((r,i)=>`<tr><td contenteditable oninput='raciEdit(${i},"process",this.innerText)'>${r.process}</td><td contenteditable oninput='raciEdit(${i},"artifact",this.innerText)'>${r.artifact}</td><td contenteditable oninput='raciEdit(${i},"A",this.innerText)'>${r.A}</td><td contenteditable oninput='raciEdit(${i},"B",this.innerText)'>${r.B}</td><td contenteditable oninput='raciEdit(${i},"C",this.innerText)'>${r.C}</td><td contenteditable oninput='raciEdit(${i},"I",this.innerText)'>${r.I}</td></tr>`).join(''); }
-  function raciEdit(i,k,v){ raciStore.rows[i][k]=v.trim(); // validación simple: solo un A por fila
-    if(k==='A' && (raciStore.rows[i].A.split(',').length>1)) Toast('Solo un "A" por fila'); Storage.set(RACI_KEY,raciStore.rows); }
-
-  /**********************
-   * Access Requests    *
-   **********************/
-  const AC_KEY='suite_access_v1';
-  const acSeed=[ {id:1001, user:'mmogrovejo', resource:'s3://datos/clientes', state:'Pendiente', etaMins:60}, {id:1002, user:'analyst01', resource:'bq:polizas', state:'Aprobado', etaMins:0} ];
-  const acStore={ rows: Storage.get(AC_KEY,acSeed) };
-  function acRenderForm(){ $('#ac_form').innerHTML = `<div class='mb-2'><label class='form-label'>Usuario</label><input id='ac_user' class='form-control' value='mmogrovejo'></div><div class='mb-2'><label class='form-label'>Recurso</label><input id='ac_res' class='form-control' placeholder='ej. bq:clientes'></div><div class='mb-2'><label class='form-label'>Justificación</label><textarea id='ac_why' class='form-control'></textarea></div><button class='btn btn-primary' id='ac_submit'>Enviar</button>`; $('#ac_submit').onclick=()=>{ const id=Math.max(1000,...acStore.rows.map(r=>r.id))+1; acStore.rows.unshift({id, user:$('#ac_user').value, resource:$('#ac_res').value, state:'Pendiente', etaMins:120}); Storage.set(AC_KEY,acStore.rows); acRenderTable(); Toast('Solicitud enviada'); } }
-  function acRenderTable(){ $('#ac_tbl tbody').innerHTML = acStore.rows.map(r=>`<tr><td>${r.id}</td><td>${r.user}</td><td>${r.resource}</td><td><span class='badge ${r.state==='Aprobado'?'text-bg-success':r.state==='Rechazado'?'text-bg-danger':'text-bg-secondary'}'>${r.state}</span></td><td>${acCountdown(r.etaMins)}</td><td class='text-end'><div class='btn-group btn-group-sm'><button class='btn btn-outline-success' onclick='acApprove(${r.id})'><i class="bi bi-check2"></i></button><button class='btn btn-outline-danger' onclick='acReject(${r.id})'><i class="bi bi-x"></i></button></div></td></tr>`).join(''); }
-  function acCountdown(mins){ if(mins<=0) return '—'; const d=new Date(Date.now()+mins*60000); return d.toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'}); }
-  function acApprove(id){ const r=acStore.rows.find(x=>x.id===id); r.state='Aprobado'; r.etaMins=0; Storage.set(AC_KEY,acStore.rows); acRenderTable(); Toast('Aprobado'); }
-  function acReject(id){ const r=acStore.rows.find(x=>x.id===id); r.state='Rechazado'; r.etaMins=0; Storage.set(AC_KEY,acStore.rows); acRenderTable(); Toast('Rechazado'); }
-
-  /**********************
-   * DPIA               *
-   **********************/
-  const DP_KEY='suite_dpia_v1';
-  const dpSeed={ purpose:'Analítica de clientes', pii:true, transfers:false, retentionDays:365, encryption:true, accessControls:true, consent:true };
-  const dpStore = { data: Storage.get(DP_KEY, dpSeed) };
-  function dpRender(){
-    const f=$('#dp_form'); const d=dpStore.data;
-    f.innerHTML=`<div class="row g-3">
-      <div class="col-md-12"><label class="form-label">Propósito del tratamiento</label><input class="form-control" value="${d.purpose}" oninput="dpUpdate('purpose',this.value)"></div>
-      <div class="col-md-3"><div class="form-check"><input class="form-check-input" type="checkbox" ${d.pii?'checked':''} onchange="dpUpdate('pii',this.checked)"><label class="form-check-label">¿Trata PII?</label></div></div>
-      <div class="col-md-3"><div class="form-check"><input class="form-check-input" type="checkbox" ${d.transfers?'checked':''} onchange="dpUpdate('transfers',this.checked)"><label class="form-check-label">¿Transf. internacionales?</label></div></div>
-      <div class="col-md-3"><div class="form-check"><input class="form-check-input" type="checkbox" ${d.encryption?'checked':''} onchange="dpUpdate('encryption',this.checked)"><label class="form-check-label">¿Cifrado?</label></div></div>
-      <div class="col-md-3"><div class="form-check"><input class="form-check-input" type="checkbox" ${d.accessControls?'checked':''} onchange="dpUpdate('accessControls',this.checked)"><label class="form-check-label">¿Control de acceso?</label></div></div>
-      <div class="col-md-6"><label class="form-label">Retención (días)</label><input type="number" class="form-control" value="${d.retentionDays}" oninput="dpUpdate('retentionDays',this.value*1)"></div>
-    </div>`;
-    dpCalcScore();
-  }
-  function dpUpdate(k,v){ dpStore.data[k]=v; Storage.set(DP_KEY,dpStore.data); dpCalcScore(); }
-  function dpCalcScore(){
-    const d=dpStore.data; let score=0;
-    if(d.pii) score+=40;
-    if(d.transfers) score+=30;
-    if(d.retentionDays > 365*2) score+=20; else if(d.retentionDays > 180) score+=10;
-    if(!d.encryption) score+=30;
-    if(!d.accessControls) score+=20;
-    $('#dp_score').textContent=score;
-    const badge=$('#dp_badge');
-    if(score>80){ badge.innerHTML='<span class="badge text-bg-danger">Alto Riesgo</span>'; }
-    else if(score>50){ badge.innerHTML='<span class="badge text-bg-warning">Riesgo Medio</span>'; }
-    else { badge.innerHTML='<span class="badge text-bg-success">Bajo Riesgo</span>'; }
-  }
-
-  /**********************
-   * Retention          *
-   **********************/
-  const RT_KEY='suite_retention_v1';
-  const rtSeed=[ {domain:'Personas',table:'clientes_bkp',action:'DELETE',date:new Date(Date.now()+8*864e5).toISOString()}, {domain:'Seguros',table:'polizas_viejas',action:'ARCHIVE',date:new Date(Date.now()+15*864e5).toISOString()} ];
-  const rtStore={data: Storage.get(RT_KEY,rtSeed)};
-  function rtRender(){
-    $('#rt_tbl tbody').innerHTML = rtStore.data.sort((a,b)=>new Date(a.date)-new Date(b.date)).map(r=>`<tr><td>${r.domain}</td><td>${r.table}</td><td>${r.action}</td><td>${new Date(r.date).toLocaleDateString()}</td></tr>`).join('');
-    rtRenderCalendar();
-    Storage.set(RT_KEY,rtStore.data);
-  }
-  function rtRenderCalendar(){
-    const cal=$('#rt_calendar'); const today=new Date(); const year=today.getFullYear(); const month=today.getMonth();
-    const firstDay=new Date(year,month,1).getDay(); const daysInMonth=new Date(year,month+1,0).getDate();
-    let html='<div class="text-center small text-secondary">Dom</div><div class="text-center small text-secondary">Lun</div><div class="text-center small text-secondary">Mar</div><div class="text-center small text-secondary">Mié</div><div class="text-center small text-secondary">Jue</div><div class="text-center small text-secondary">Vie</div><div class="text-center small text-secondary">Sáb</div>';
-    for(let i=0; i<firstDay; i++) html+='<div></div>';
-    for(let i=1; i<=daysInMonth; i++){
-      const d=new Date(year,month,i); const events=rtStore.data.filter(e=>new Date(e.date).toDateString()===d.toDateString());
-      html+=`<div class="day ${d.toDateString()===today.toDateString()?'bg-primary bg-opacity-10':''}"><strong>${i}</strong>${events.map(e=>`<div class="small truncate mt-1" title="${e.action}: ${e.table}">${e.action}: ${e.table}</div>`).join('')}</div>`;
-    }
-    cal.innerHTML=html;
-  }
-
-  /**********************
-   * Kanban             *
-   **********************/
-  const KB_KEY='suite_kanban_v1';
-  const kbSeed=[ {id:crypto.randomUUID(),title:'DNI duplicados en Clientes',col:'Backlog'}, {id:crypto.randomUUID(),title:'Fallos de ingesta CRM',col:'En Progreso'} ];
-  const kbStore={data:Storage.get(KB_KEY,kbSeed)};
-  function kbRender(){
-    $$('.drag-col').forEach(c=>c.innerHTML=`<h6>${c.dataset.col}</h6>`);
-    kbStore.data.forEach(t=>{
-      const el=document.createElement('div'); el.className='kanban-card'; el.textContent=t.title; el.draggable=true; el.dataset.id=t.id;
-      $(`#kb_${t.col.toLowerCase().replace(' ','')}`).appendChild(el);
-    });
-    Storage.set(KB_KEY,kbStore.data);
-  }
-  function kbSetupDrag(){
-    let dragEl=null;
-    $$('.drag-col').forEach(c=>{
-      c.ondragover = e => e.preventDefault();
-      c.ondrop = e => { e.preventDefault(); if(dragEl){ const id=dragEl.dataset.id; const task=kbStore.data.find(t=>t.id===id); task.col=c.dataset.col; kbRender(); dragEl=null; Toast('Movido a '+task.col); } };
-    });
-    document.addEventListener('dragstart', e=>{ if(e.target.classList.contains('kanban-card')) dragEl=e.target; });
-  }
-
-  /**********************
-   * Data Contracts     *
-   **********************/
-  function ctValidate(){
-    const txt=$('#ct_json').value;
-    try{ const json=JSON.parse(txt); $('#ct_preview').innerHTML='<div class="alert alert-success">JSON válido</div>';
-      let preview='<h5>Contrato: '+json.name+'</h5>';
-      if(json.schema) preview+=`<h6>Schema</h6><ul>${Object.entries(json.schema).map(([k,v])=>`<li><strong>${k}</strong>: ${v}</li>`).join('')}</ul>`;
-      if(json.slas) preview+=`<h6>SLAs</h6><ul>${Object.entries(json.slas).map(([k,v])=>`<li><strong>${k}</strong>: ${v}</li>`).join('')}</ul>`;
-      $('#ct_preview').innerHTML+=preview;
-    }catch(e){ $('#ct_preview').innerHTML=`<div class="alert alert-danger">Error en JSON: ${e.message}</div>`; }
-  }
-
-  /**********************
-   * Domain Map         *
-   **********************/
-  function dmRender(){
-    const domains=[...new Set(dcStore.data.map(d=>d.domain))];
-    $('#dm_grid').innerHTML = domains.map(d=>`<div class="col-md-4"><div class="card"><div class="card-body"><h5>${d}</h5><hr>${dcStore.data.filter(p=>p.domain===d).map(p=>`<div class="mb-1"><i class="bi bi-box me-2"></i>${p.title}</div>`).join('')}</div></div></div>`).join('');
-  }
-
-  /**********************
-   * Training           *
-   **********************/
-  const trStore = {
-    courses: [ {id:1, title:'Intro al Gobierno de Datos', done:true}, {id:2, title:'Clasificación de Datos Avanzada', done:false} ],
-    quiz: null
-  };
-  function trRender(){
-    $('#tr_courses').innerHTML = `<h5>Cursos</h5><div class="list-group">${trStore.courses.map(c=>`<div class="list-group-item d-flex justify-content-between align-items-center">${c.title} <i class="bi ${c.done?'bi-check-circle-fill text-success':'bi-circle'}"></i></div>`).join('')}</div>`;
-    if(!trStore.quiz) $('#tr_quiz').innerHTML='<div class="text-center p-3 text-secondary">Completa el quiz para obtener tu certificación.</div>';
-  }
-  function trStartQuiz(){
-    trStore.quiz = {
-      q: '¿Cuál es un nivel de sensibilidad de datos?',
-      opts: ['Público','Secreto','Privado'],
-      ans: 'Público',
-      sel: null
-    };
-    const q=trStore.quiz;
-    $('#tr_quiz').innerHTML=`<h5>Quiz Rápido</h5><p>${q.q}</p>${q.opts.map(o=>`<div class="form-check"><input class="form-check-input" type="radio" name="quizOpt" value="${o}" id="opt_${o}"><label class="form-check-label" for="opt_${o}">${o}</label></div>`).join('')}<button class="btn btn-primary btn-sm mt-2" onclick="trCheckQuiz()">Revisar</button>`;
-  }
-  function trCheckQuiz(){
-    const sel = $('input[name=quizOpt]:checked')?.value;
-    if(!sel) return Toast('Selecciona una opción');
-    if(sel === trStore.quiz.ans){ Toast('¡Correcto!'); $('#tr_quiz').innerHTML='<div class="alert alert-success">¡Aprobado! Certificación emitida.</div>'; }
-    else{ Toast('Incorrecto, intenta de nuevo.'); }
-  }
-
-  /**********************
-   * Data Sharing       *
-   **********************/
-  const SH_KEY='suite_sharing_v1';
-  const shSeed=[ {id:crypto.randomUUID(), name:'Acuerdo con Partner Analítico', parties:'Corp <-> Partner A', confidentiality:'Confidencial', expiry: daysAgo(-365), status:'Activo'} ];
-  const shStore = { data: Storage.get(SH_KEY, shSeed) };
-  function shRender(){
-    $('#sh_tbl tbody').innerHTML = shStore.data.map(s=>`<tr><td>${s.name}</td><td>${s.parties}</td><td>${s.confidentiality}</td><td>${new Date(s.expiry).toLocaleDateString()}</td><td><span class="badge text-bg-success">${s.status}</span></td></tr>`).join('');
-    Storage.set(SH_KEY, shStore.data);
-  }
-
-  /**********************
-   * Init & Events      *
-   **********************/
-  document.addEventListener('DOMContentLoaded', ()=>{
-    // Router & Nav
-    buildSidebar();
-    showRoute(location.hash.replace('#','') || 'glossary');
-    $('#navSearch').addEventListener('input', e=>{
-      const q = e.target.value.toLowerCase();
-      $$('#navList a').forEach(a=>{ a.style.display = a.textContent.toLowerCase().includes(q) ? '' : 'none'; });
-    });
-
-    // Glossary
-    glRefreshDomains(); glRender();
-    $('#gl_q').addEventListener('input', e=>{ glStore.filters.q=e.target.value; glRender(); });
-    $('#gl_domain').addEventListener('change', e=>{ glStore.filters.dom=e.target.value; glRender(); });
-    $('#gl_sens').addEventListener('change', e=>{ glStore.filters.sens=e.target.value; glRender(); });
-    $('#gl_status').addEventListener('change', e=>{ glStore.filters.st=e.target.value; glRender(); });
-    $('#gl_form').addEventListener('submit', e=>{
-      e.preventDefault(); const form=e.target; if(!form.checkValidity()){ form.classList.add('was-validated'); return; }
-      const id=$('#gl_id').value; let term = glStore.data.find(x=>x.id===id);
-      const values = { term:$('#gl_name').value, definition:$('#gl_def').value, domain:$('#gl_dom').value, owner:$('#gl_owner').value, sensitivity:$('#gl_sens_sel').value, status:$('#gl_status_sel').value, updatedAt:new Date().toISOString() };
-      if(term){ Object.assign(term, values); }
-      else{ term={id:crypto.randomUUID(), ...values}; glStore.data.push(term); }
-      Storage.set(GL_KEY, glStore.data); glRefreshDomains(); glRender(); bootstrap.Offcanvas.getInstance('#ocGlossary').hide(); Toast('Término guardado');
-    });
-    $('#gl_export_csv').onclick = () => { const data=glApply(); const csv="data:text/csv;charset=utf-8,"+['Término','Definición','Dominio','Dueño','Sensibilidad','Estado'].join(',')+'\\n'+data.map(i=>`"${i.term}","${i.definition}","${i.domain}","${i.owner}","${i.sensitivity}","${i.status}"`).join('\\n'); window.open(encodeURI(csv)); };
-    $('#gl_export_json').onclick = () => { const data=glApply(); const json="data:text/json;charset=utf-8,"+JSON.stringify(data,null,2); window.open(encodeURI(json)); };
-    $('#gl_import').onchange = e => { const file=e.target.files[0]; if(!file)return; const reader=new FileReader(); reader.onload=e=>{ try{ const imported=JSON.parse(e.target.result); if(Array.isArray(imported)){ glStore.data=glStore.data.concat(imported.map(i=>({...i,id:crypto.randomUUID()}))); Storage.set(GL_KEY,glStore.data); glRefreshDomains(); glRender(); Toast(`${imported.length} términos importados.`); } }catch(err){ Toast('Error en formato JSON'); } }; reader.readAsText(file); };
-
-    // Data Catalog
-    dcRefreshFilters(); dcRender();
-    $('#dc_q').addEventListener('input', e=>{ dcStore.filters.q=e.target.value; dcRender(); });
-    $('#dc_domain').addEventListener('change', e=>{ dcStore.filters.dom=e.target.value; dcRender(); });
-    $('#dc_sensitivity').addEventListener('change', e=>{ dcStore.filters.sens=e.target.value; dcRender(); });
-    $('#dc_piionly').addEventListener('change', e=>{ dcStore.filters.type=e.target.value; dcRender(); });
-    $('#dc_save_collections').onclick = () => Toast(`Colección guardada (${dcStore.collections.length} items)`);
-
-    // Lineage
-    $('#ln_reset').onclick = () => drawLineage('#ln_canvas', []);
-    drawLineage('#ln_canvas', [ {x:120,y:160,l:'CRM'}, {x:320,y:80,l:'API'}, {x:320,y:240,l:'Batch'}, {x:520,y:160,l:'Data Mart'}, {x:720,y:160,l:'Reporte BI'} ]);
-
-    // Quality
-    dqRender();
-
-    // Rule Builder
-    rbRender();
-    $('#rb_add').onclick = () => {
-      rbStore.rules.push({ dataset:$('#rb_dataset').value, field:$('#rb_field').value, type:$('#rb_type').value, expr:$('#rb_expr').value, severity:$('#rb_sev').value, threshold:$('#rb_thr').value });
-      rbRender(); Toast('Regla agregada al JSON');
-    };
-    $('#rb_preview').onclick = () => {
-      const json = $('#rb_json').textContent;
-      const modal = new bootstrap.Modal(document.createElement('div'), {});
-      const el = modal._element;
-      el.innerHTML=`<div class="modal fade" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">JSON Preview</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><pre>${json}</pre></div></div></div></div>`;
-      document.body.appendChild(el);
-      modal.show();
-      el.addEventListener('hidden.bs.modal', ()=>el.remove());
-    };
-    const dsDatalist = $('#dlDatasets');
-    dsDatalist.innerHTML = dcStore.data.map(d=>`<option value="${d.id}">`).join('');
-
-    // Policies
-    plRenderList();
-    $('#pl_q').addEventListener('input', plRenderList);
-    $('#pl_new').onclick = () => Toast('No implementado (demo)');
-
-    // RACI
-    raciRender();
-    $('#raci_export').onclick = () => { const data=raciStore.rows; const csv="data:text/csv;charset=utf-8,"+['Proceso','Artefacto','A','B','C','I'].join(',')+'\\n'+data.map(i=>`"${i.process}","${i.artifact}","${i.A}","${i.B}","${i.C}","${i.I}"`).join('\\n'); window.open(encodeURI(csv)); };
-
-    // Access
-    acRenderForm(); acRenderTable();
-    $('#ac_new').onclick = acRenderForm;
-
-    // DPIA
-    dpRender();
-    $('#dp_new').onclick = () => { dpStore.data=dpSeed; dpRender(); Toast('Formulario reseteado'); };
-
-    // Retention
-    rtRender();
-    $('#rt_new').onclick = () => Toast('No implementado (demo)');
-
-    // Kanban
-    kbRender(); kbSetupDrag();
-    $('#kb_new').onclick = () => { const title=prompt('Título de la incidencia:'); if(title) { kbStore.data.push({id:crypto.randomUUID(),title,col:'Backlog'}); kbRender(); } };
-
-    // Contracts
-    $('#ct_validate').onclick = ctValidate;
-
-    // Domain Map
-    dmRender();
-    $('#dm_refresh').onclick = dmRender;
-
-    // Training
-    trRender();
-    $('#tr_start').onclick = trStartQuiz;
-
-    // Sharing
-    shRender();
-    $('#sh_new').onclick = () => Toast('No implementado (demo)');
+  // Sidebar clicks
+  $$('#menu a[data-section]').forEach(a=>{
+    a.addEventListener('click', (e)=>{ e.preventDefault(); go('#'+a.dataset.section); });
   });
-  </script>
+
+  /************* Theme *************/
+  let dark=true;
+  $('#btnTheme').addEventListener('click', ()=>{
+    dark=!dark;
+    document.body.style.background = dark ? '#0b1220' : '#f4f6ff';
+    document.querySelectorAll('.card,.topbar,.sidebar,.modal-content,.offcanvas').forEach(el=>{
+      el.style.background = dark ? '#0f1a2b' : '#ffffff';
+      el.style.color = dark ? '#e6ecff' : '#0b1220';
+    });
+    Toast(dark?'Tema oscuro':'Tema claro');
+  });
+
+  /************* Export/Import global *************/
+  $('#btnExportAll').addEventListener('click', ()=>{
+    const payload = {
+      glossary: Storage.get('gl_data', []),
+      catalog: Storage.get('dc_data', []),
+      dq: Storage.get('dq_rules', []),
+      builder: Storage.get('b_rules', []),
+      policies: Storage.get('p_items', []),
+      raci: Storage.get('raci_rows', []),
+      access: Storage.get('a_rows', []),
+      dpia: Storage.get('dp_item', {}),
+      retention: Storage.get('rt_rows', []),
+      kanban: Storage.get('k_cards', []),
+      contracts: Storage.get('ct_last', null),
+      domains: Storage.get('dm_items', []),
+      training: Storage.get('tr_store', {}),
+      sharing: Storage.get('sh_rows', [])
+    };
+    const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'gov-data-suite.json';
+    a.click();
+  });
+  $('#importAll').addEventListener('change', (e)=>{
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = ev=>{
+      try{
+        const obj = JSON.parse(ev.target.result);
+        Object.entries(obj).forEach(([k,v])=>{
+          const map = {
+            glossary:'gl_data', catalog:'dc_data', dq:'dq_rules', builder:'b_rules',
+            policies:'p_items', raci:'raci_rows', access:'a_rows', dpia:'dp_item',
+            retention:'rt_rows', kanban:'k_cards', contracts:'ct_last',
+            domains:'dm_items', training:'tr_store', sharing:'sh_rows'
+          };
+          if(map[k]) Storage.set(map[k], v);
+        });
+        Toast('Datos importados');
+        location.reload();
+      }catch(err){ alert('No se pudo importar: '+err.message); }
+    };
+    r.readAsText(f);
+    e.target.value='';
+  });
+
+  /************* Boot *************/
+  document.addEventListener('DOMContentLoaded', ()=>{
+    go(location.hash);
+  });
+</script>
+<!-- NOTE: Module-specific JS will be added in subsequent steps -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    /************* Glossary Module *************/
+    const G_KEY = 'g_data_v2';
+    const g_seed = [
+        {id: crypto.randomUUID(), term: 'Cliente', definition: 'Persona natural o jurídica que contrata productos y servicios.', domain: 'Personas', owner: 'Steward Personas', sensitivity: 'Interno', status: 'Vigente', updatedAt: new Date().toISOString()},
+        {id: crypto.randomUUID(), term: 'Póliza', definition: 'Contrato que establece coberturas y condiciones de seguro.', domain: 'Seguros', owner: 'Steward Pólizas', sensitivity: 'Confidencial', status: 'Vigente', updatedAt: new Date().toISOString()},
+        {id: crypto.randomUUID(), term: 'Siniestro', definition: 'Evento que activa el proceso de pago definido en la póliza.', domain: 'Siniestros', owner: 'Steward Siniestros', sensitivity: 'Confidencial', status: 'Vigente', updatedAt: new Date().toISOString()}
+    ];
+    const g_store = {
+        data: Storage.get(G_KEY, g_seed),
+        filters: {q: '', dom: '', sens: '', st: ''}
+    };
+    const g_oc = new bootstrap.Offcanvas('#ocGlossary');
+
+    function g_badge(s) {
+        const map = {Público: 'success', Interno: 'secondary', Confidencial: 'warning', "Alto Secreto": 'danger'};
+        return `<span class="badge text-bg-${map[s] || 'light'}">${s}</span>`;
+    }
+    function g_chip(s) {
+        const map = {Vigente: 'success', Borrador: 'info', Obsoleto: 'secondary'};
+        return `<span class="badge rounded-pill text-bg-${map[s] || 'light'}">${s}</span>`;
+    }
+    function g_fmt_date(d) {
+        return new Date(d).toLocaleDateString('es-PE', {year: '2-digit', month: 'short', day: 'numeric'});
+    }
+    function g_refresh_domains() {
+        const domains = [...new Set(g_store.data.map(x => x.domain))].sort();
+        $('#g_domain_filter').innerHTML = '<option value="">Todos</option>' + domains.map(d => `<option>${d}</option>`).join('');
+        $('#g_dlDomains').innerHTML = domains.map(d => `<option value="${d}"></option>`).join('');
+    }
+    function g_apply_filters() {
+        const n = t => (t || '').toString().toLowerCase();
+        let list = [...g_store.data];
+        const f = g_store.filters;
+        if (f.q) {
+            const q = n(f.q);
+            list = list.filter(x => [x.term, x.definition, x.domain, x.owner].some(v => n(v).includes(q)));
+        }
+        if (f.dom) list = list.filter(x => x.domain === f.dom);
+        if (f.sens) list = list.filter(x => x.sensitivity === f.sens);
+        if (f.st) list = list.filter(x => x.status === f.st);
+        return list.sort((a, b) => a.term.localeCompare(b.term, 'es'));
+    }
+    function g_render() {
+        const list = g_apply_filters();
+        const tbody = $('#g_tbl tbody');
+        tbody.innerHTML = list.map(x => `
+            <tr>
+                <td><strong>${x.term}</strong></td>
+                <td><span title="${x.definition}" class="d-inline-block text-truncate" style="max-width: 250px;">${x.definition}</span></td>
+                <td>${x.domain}</td>
+                <td>${x.owner}</td>
+                <td>${g_badge(x.sensitivity)}</td>
+                <td>${g_chip(x.status)}</td>
+                <td>${g_fmt_date(x.updatedAt)}</td>
+                <td class="text-end">
+                    <button class="btn btn-sm btn-outline-light" onclick="g_open_edit('${x.id}')"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="g_del('${x.id}')"><i class="bi bi-trash"></i></button>
+                </td>
+            </tr>
+        `).join('');
+    }
+    window.g_open_edit = (id) => {
+        const item = g_store.data.find(x => x.id === id);
+        if (!item) return;
+        $('#g_form').reset();
+        $('#g_form').classList.remove('was-validated');
+        $('#g_id').value = item.id;
+        $('#g_name').value = item.term;
+        $('#g_def').value = item.definition;
+        $('#g_dom').value = item.domain;
+        $('#g_owner').value = item.owner;
+        $('#g_sens_sel').value = item.sensitivity;
+        $('#g_status_sel').value = item.status;
+        g_oc.show();
+    };
+    window.g_del = (id) => {
+        if (!confirm('¿Está seguro de que desea eliminar este término?')) return;
+        g_store.data = g_store.data.filter(x => x.id !== id);
+        Storage.set(G_KEY, g_store.data);
+        g_render();
+        g_refresh_domains();
+        Toast('Término eliminado.');
+    };
+
+    // Init and listeners
+    $('#g_new').addEventListener('click', () => {
+        $('#g_form').reset();
+        $('#g_id').value = '';
+        $('#g_form').classList.remove('was-validated');
+    });
+    $('#g_form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const form = e.target;
+        if (!form.checkValidity()) {
+            form.classList.add('was-validated');
+            return;
+        }
+        const id = $('#g_id').value;
+        const values = {
+            term: $('#g_name').value,
+            definition: $('#g_def').value,
+            domain: $('#g_dom').value,
+            owner: $('#g_owner').value,
+            sensitivity: $('#g_sens_sel').value,
+            status: $('#g_status_sel').value,
+            updatedAt: new Date().toISOString()
+        };
+        if (id) { // Editing
+            const item = g_store.data.find(x => x.id === id);
+            Object.assign(item, values);
+        } else { // Creating
+            g_store.data.push({id: crypto.randomUUID(), ...values});
+        }
+        Storage.set(G_KEY, g_store.data);
+        g_render();
+        g_refresh_domains();
+        g_oc.hide();
+        form.classList.remove('was-validated');
+        Toast('Término guardado.');
+    });
+
+    // Filters
+    $('#g_q').addEventListener('input', e => { g_store.filters.q = e.target.value; g_render(); });
+    $('#g_domain_filter').addEventListener('change', e => { g_store.filters.dom = e.target.value; g_render(); });
+    $('#g_sens_filter').addEventListener('change', e => { g_store.filters.sens = e.target.value; g_render(); });
+    $('#g_status_filter').addEventListener('change', e => { g_store.filters.st = e.target.value; g_render(); });
+
+    // Initial render
+    if(document.querySelector('#glossary').classList.contains('active')){
+      g_refresh_domains();
+      g_render();
+    }
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    /************* Data Catalog Module *************/
+    const C_KEY = 'c_data_v2';
+    const c_seed = [
+        {id: 'clientes', title: 'Clientes', domain: 'Personas', sensitivity: 'Confidencial', tags: ['PII'], cols: [{name: 'dni', type: 'string', pii: true}, {name: 'email', type: 'string', pii: true}, {name: 'edad', type: 'int'}]},
+        {id: 'polizas', title: 'Pólizas', domain: 'Seguros', sensitivity: 'Interno', tags: [], cols: [{name: 'id', type: 'string'}, {name: 'cobertura', type: 'string'}]},
+    ];
+    const c_store = {
+        data: Storage.get(C_KEY, c_seed),
+        filters: {q: '', dom: '', sens: '', pii: ''},
+        editing_cols: []
+    };
+    const c_oc = new bootstrap.Offcanvas('#ocDataset');
+    const c_modal = new bootstrap.Modal('#mdDataset');
+
+    function c_sens_badge(s) {
+        const map = {Público: 'success', Interno: 'secondary', Confidencial: 'warning', "Alto Secreto": 'danger'};
+        return `<span class="badge text-bg-${map[s] || 'light'}">${s}</span>`;
+    }
+
+    function c_apply_filters() {
+        const n = t => (t || '').toString().toLowerCase();
+        let list = [...c_store.data];
+        const f = c_store.filters;
+        if (f.q) {
+            const q = n(f.q);
+            list = list.filter(x => n(x.title).includes(q) || x.cols.some(c => n(c.name).includes(q)));
+        }
+        if (f.dom) list = list.filter(x => x.domain === f.dom);
+        if (f.sens) list = list.filter(x => x.sensitivity === f.sens);
+        if (f.pii === 'pii') list = list.filter(x => x.tags.includes('PII'));
+        if (f.pii === 'npii') list = list.filter(x => !x.tags.includes('PII'));
+        return list.sort((a, b) => a.title.localeCompare(b.title, 'es'));
+    }
+
+    function c_render() {
+        const list = c_apply_filters();
+        $('#c_grid').innerHTML = list.map(d => `
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <h5 class="card-title">${d.title}</h5>
+                            <span class="badge rounded-pill text-bg-primary">${d.domain}</span>
+                        </div>
+                        <div class="mb-2">${c_sens_badge(d.sensitivity)}</div>
+                        <div class="small text-secondary">${d.cols.length} columnas</div>
+                        <div class="mt-2 d-flex gap-1 flex-wrap">
+                            ${(d.tags || []).map(t => `<span class="badge text-bg-info">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <button class="btn btn-sm btn-outline-light" onclick="c_open_detail('${d.id}')"><i class="bi bi-eye"></i> Ver</button>
+                        <button class="btn btn-sm btn-outline-primary" onclick="c_open_edit('${d.id}')"><i class="bi bi-pencil"></i> Editar</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function c_render_col_editor() {
+        $('#c_cols_list').innerHTML = c_store.editing_cols.map((c, i) => `
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <span><i class="bi bi-diagram-2 me-2"></i>${c.name} <small class="text-secondary">(${c.type})</small></span>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="c_remove_col(${i})"><i class="bi bi-trash"></i></button>
+            </div>
+        `).join('');
+    }
+
+    window.c_remove_col = (index) => {
+        c_store.editing_cols.splice(index, 1);
+        c_render_col_editor();
+    };
+
+    window.c_open_detail = (id) => {
+        const d = c_store.data.find(x => x.id === id);
+        if (!d) return;
+        $('#md_title').textContent = d.title;
+        $('#md_cols').innerHTML = `<table class="table"><thead><tr><th>Columna</th><th>Tipo</th><th>PII</th></tr></thead><tbody>${d.cols.map(c => `<tr><td>${c.name}</td><td>${c.type}</td><td>${c.pii ? 'Sí' : 'No'}</td></tr>`).join('')}</tbody></table>`;
+        $('#md_quality').innerHTML = `<p>Completitud: 98%</p><p>Unicidad: 99.5%</p>`;
+        // Simple lineage draw
+        const canvas = $('#md_lineage');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = '#e6ecff';
+        ctx.fillText('Lineage graph for ' + d.title, 20, 20);
+        c_modal.show();
+    };
+
+    window.c_open_edit = (id) => {
+        const item = c_store.data.find(x => x.id === id);
+        if (!item) return;
+        $('#c_form').reset();
+        $('#c_form').classList.remove('was-validated');
+        $('#c_id_edit').value = item.id;
+        $('#c_name').value = item.title;
+        $('#c_dom_in').value = item.domain;
+        $('#c_sens_in').value = item.sensitivity;
+        $('#c_tags_in').value = (item.tags || []).join(', ');
+        c_store.editing_cols = [...item.cols];
+        c_render_col_editor();
+        c_oc.show();
+    };
+
+    $('#c_new').addEventListener('click', () => {
+        $('#c_form').reset();
+        $('#c_id_edit').value = '';
+        $('#c_form').classList.remove('was-validated');
+        c_store.editing_cols = [];
+        c_render_col_editor();
+    });
+
+    $('#c_col_add').addEventListener('click', () => {
+        const name = $('#c_col_name').value.trim();
+        const type = $('#c_col_type').value;
+        if (!name) return Toast('El nombre de la columna es obligatorio.');
+        c_store.editing_cols.push({ name, type, pii: false }); // pii detection is a more complex feature
+        c_render_col_editor();
+        $('#c_col_name').value = '';
+    });
+
+    $('#c_form').addEventListener('submit', e => {
+        e.preventDefault();
+        const form = e.target;
+        if (!form.checkValidity()) {
+            form.classList.add('was-validated');
+            return;
+        }
+        const id = $('#c_id_edit').value;
+        const values = {
+            title: $('#c_name').value,
+            domain: $('#c_dom_in').value,
+            sensitivity: $('#c_sens_in').value,
+            tags: $('#c_tags_in').value.split(',').map(t => t.trim()).filter(Boolean),
+            cols: c_store.editing_cols
+        };
+        if (id) {
+            const item = c_store.data.find(x => x.id === id);
+            Object.assign(item, values);
+        } else {
+            c_store.data.push({id: values.title.toLowerCase().replace(/ /g, '_'), ...values});
+        }
+        Storage.set(C_KEY, c_store.data);
+        c_render();
+        c_oc.hide();
+        Toast('Dataset guardado.');
+    });
+
+    // Filters
+    $('#c_q').addEventListener('input', e => { c_store.filters.q = e.target.value; c_render(); });
+    $('#c_domain_filter').addEventListener('change', e => { c_store.filters.dom = e.target.value; c_render(); });
+    $('#c_sens_filter').addEventListener('change', e => { c_store.filters.sens = e.target.value; c_render(); });
+    $('#c_pii_filter').addEventListener('change', e => { c_store.filters.pii = e.target.value; c_render(); });
+
+    // Initial render
+    if(document.querySelector('#catalog').classList.contains('active')){
+      c_render();
+    }
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    /************* Quality Dashboard Module *************/
+    const Q_KEY = 'q_rules_v2';
+    const q_seed = [
+        { id: crypto.randomUUID(), name:'Completitud Email', domain:'Personas', dataset:'clientes', field:'email', severity:'Media', status:'Activa', threshold:98, lastRun: new Date(Date.now() - 864e5).toISOString(), result:'Aprobada', failures:12, desc:'No nulos en email' },
+        { id: crypto.randomUUID(), name:'Unicidad DNI', domain:'Personas', dataset:'clientes', field:'dni', severity:'Alta', status:'Activa', threshold:100, lastRun: new Date(Date.now() - 864e5).toISOString(), result:'Fallida', failures:7, desc:'Sin duplicados en DNI' },
+    ];
+    const q_store = {
+        rules: Storage.get(Q_KEY, q_seed)
+    };
+    const q_modal = new bootstrap.Modal('#mdlBuilder');
+
+    function q_sev_badge(s) {
+        const map = {Baja: 'success', Media: 'info', Alta: 'warning', Crítica: 'danger'};
+        return `<span class="badge text-bg-${map[s] || 'secondary'}">${s}</span>`;
+    }
+    function q_res_badge(s) {
+        return s === 'Aprobada' ? `<span class="badge text-bg-success">Aprobada</span>` : `<span class="badge text-bg-danger">Fallida</span>`;
+    }
+    function q_fmt_dt(d) {
+        return new Date(d).toLocaleString('es-PE', {year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit'});
+    }
+
+    function q_render() {
+        const rules = q_store.rules;
+        $('#q_tbl tbody').innerHTML = rules.map(r => `
+            <tr>
+                <td><strong>${r.name}</strong><br><small class="text-secondary">${r.desc || ''}</small></td>
+                <td><span class="badge rounded-pill text-bg-primary">${r.domain}</span></td>
+                <td>${r.dataset}</td>
+                <td>${r.field || '-'}</td>
+                <td>${q_sev_badge(r.severity)}</td>
+                <td><span class="badge rounded-pill text-bg-light">${r.status}</span></td>
+                <td>${q_fmt_dt(r.lastRun)}</td>
+                <td>${q_res_badge(r.result)}</td>
+                <td>${r.failures}</td>
+                <td class="text-end">
+                    <button class="btn btn-sm btn-outline-danger" onclick="q_del('${r.id}')"><i class="bi bi-trash"></i></button>
+                </td>
+            </tr>
+        `).join('');
+
+        const active_rules = rules.filter(r => r.status === 'Activa');
+        $('#q_kpi_rules').textContent = rules.length;
+        $('#q_kpi_inc').textContent = active_rules.filter(r => r.result === 'Fallida').length;
+        const pass_rate = active_rules.length > 0 ? Math.round(100 * active_rules.filter(r => r.result === 'Aprobada').length / active_rules.length) : 0;
+        $('#q_kpi_pass').textContent = `${pass_rate}%`;
+    }
+
+    window.q_del = (id) => {
+        if (!confirm('¿Eliminar regla de calidad?')) return;
+        q_store.rules = q_store.rules.filter(r => r.id !== id);
+        Storage.set(Q_KEY, q_store.rules);
+        q_render();
+        Toast('Regla eliminada.');
+    };
+
+    // Rule Builder Modal
+    $('#b_add').addEventListener('click', () => {
+        const new_rule = {
+            id: crypto.randomUUID(),
+            name: `${$('#b_type').value} en ${$('#b_field').value}`,
+            desc: $('#b_expr').value,
+            domain: 'N/A', // Domain info would require more context
+            dataset: $('#b_ds').value,
+            field: $('#b_field').value,
+            severity: $('#b_sev').value,
+            status: 'Activa',
+            threshold: $('#b_thr').value,
+            lastRun: new Date().toISOString(),
+            result: 'Pendiente',
+            failures: 0
+        };
+        q_store.rules.push(new_rule);
+        Storage.set(Q_KEY, q_store.rules);
+        q_render();
+        q_modal.hide();
+        Toast('Nueva regla de calidad agregada.');
+    });
+
+    // Initial render
+    if(document.querySelector('#quality').classList.contains('active')){
+      q_render();
+    }
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const init_map = {
+        policies: () => {
+            const P_KEY = 'p_items_v2';
+            const p_seed = [
+                {id: crypto.randomUUID(), title:'Política de Clasificación de Datos', status:'Vigente', version:2, content:'Niveles: Público, Interno, Confidencial, Alto Secreto.', history:['v1 creado','v2 ajustes de definiciones'], updatedAt: new Date().toISOString()},
+                {id: crypto.randomUUID(), title:'Estándar de Nombres de Tablas', status:'Borrador', version:1, content:'snake_case, prefijos por dominio, sin tildes.', history:['v1 creado'], updatedAt: new Date().toISOString()}
+            ];
+            const p_store = { items: Storage.get(P_KEY, p_seed), sel: null };
+            const p_render_list = () => {
+                const q = $('#p_q').value?.toLowerCase() || '';
+                $('#p_list').innerHTML = p_store.items.filter(p => p.title.toLowerCase().includes(q)).map(p => `<button class='list-group-item list-group-item-action bg-transparent text-light' onclick='p_open("${p.id}")'>${p.title}</button>`).join('');
+            };
+            window.p_open = (id) => {
+                const p = p_store.items.find(x => x.id === id);
+                if(!p) return;
+                p_store.sel = p;
+                $('#p_title').textContent = p.title;
+                $('#p_meta').textContent = `Estado: ${p.status} · v${p.version}`;
+                $('#p_content').textContent = p.content;
+                $('#p_diff').textContent = (p.history || []).map(h => `• ${h}`).join('\\n');
+            };
+            $('#p_q').addEventListener('input', p_render_list);
+            p_render_list();
+        },
+        raci: () => {
+            const RACI_KEY = 'raci_rows_v2';
+            const raci_seed = [{process: 'Alta de Producto de Datos', artifact: 'Contrato de Datos', R: 'Data Engineer', A: 'Data Owner', C: 'Steward, Seguridad', I: 'Arquitectura'}];
+            const raci_store = {rows: Storage.get(RACI_KEY, raci_seed)};
+            const raci_render = () => {
+                $('#raci_tbl tbody').innerHTML = raci_store.rows.map((r, i) => `<tr>
+                    <td contenteditable oninput='raci_edit(${i},"process",this.innerText)'>${r.process}</td>
+                    <td contenteditable oninput='raci_edit(${i},"artifact",this.innerText)'>${r.artifact}</td>
+                    <td contenteditable oninput='raci_edit(${i},"R",this.innerText)'>${r.R}</td>
+                    <td contenteditable oninput='raci_edit(${i},"A",this.innerText)'>${r.A}</td>
+                    <td contenteditable oninput='raci_edit(${i},"C",this.innerText)'>${r.C}</td>
+                    <td contenteditable oninput='raci_edit(${i},"I",this.innerText)'>${r.I}</td>
+                </tr>`).join('');
+            };
+            window.raci_edit = (i, k, v) => { raci_store.rows[i][k] = v.trim(); Storage.set(RACI_KEY, raci_store.rows); };
+            raci_render();
+        },
+        access: () => {
+            // This module can be expanded with a real form
+            $('#a_form').innerHTML = '<p>El formulario de solicitud de acceso se implementará en una versión futura.</p>';
+        },
+        dpia: () => {
+            const DP_KEY = 'dpia_item_v2';
+            const dp_seed = {purpose: 'Analítica de clientes', pii: true, transfers: false, retentionDays: 365, encryption: true, accessControls: true};
+            const dp_store = {data: Storage.get(DP_KEY, dp_seed)};
+            const dp_render = () => {
+                const d=dp_store.data;
+                $('#dp_form').innerHTML=`<div class="row g-3">
+                  <div class="col-md-12"><label class="form-label">Propósito</label><input class="form-control" value="${d.purpose}" oninput="dp_update('purpose',this.value)"></div>
+                  <div class="col-md-3"><div class="form-check"><input class="form-check-input" type="checkbox" ${d.pii?'checked':''} onchange="dp_update('pii',this.checked)"><label class="form-check-label">¿Trata PII?</label></div></div>
+                  <div class="col-md-3"><div class="form-check"><input class="form-check-input" type="checkbox" ${d.transfers?'checked':''} onchange="dp_update('transfers',this.checked)"><label class="form-check-label">¿Transf. internacionales?</label></div></div>
+                  <div class="col-md-3"><div class="form-check"><input class="form-check-input" type="checkbox" ${d.encryption?'checked':''} onchange="dp_update('encryption',this.checked)"><label class="form-check-label">¿Cifrado?</label></div></div>
+                </div>`;
+                dp_calc_score();
+            };
+            window.dp_update = (k,v) => { dp_store.data[k]=v; Storage.set(DP_KEY,dp_store.data); dp_calc_score(); };
+            const dp_calc_score = () => {
+                const d=dp_store.data; let score=0;
+                if(d.pii) score+=40; if(d.transfers) score+=30; if(!d.encryption) score+=30;
+                $('#dp_score').textContent=score;
+                const badge=$('#dp_badge');
+                if(score>80) badge.innerHTML='<span class="badge text-bg-danger">Alto Riesgo</span>';
+                else if(score>50) badge.innerHTML='<span class="badge text-bg-warning">Riesgo Medio</span>';
+                else badge.innerHTML='<span class="badge text-bg-success">Bajo Riesgo</span>';
+            };
+            dp_render();
+        },
+        kanban: () => {
+            const K_KEY = 'k_cards_v2';
+            const k_seed = [{id: crypto.randomUUID(), title: 'DNI duplicados en Clientes', col: 'Backlog'}, {id: crypto.randomUUID(), title: 'Fallos de ingesta CRM', col: 'En Progreso'}];
+            const k_store = {data: Storage.get(K_KEY, k_seed)};
+            let drag_el = null;
+            const k_render = () => {
+                $$('.kanban-col').forEach(c => c.innerHTML = `<h6>${c.dataset.col} <span class="badge text-bg-secondary">${k_store.data.filter(i=>i.col === c.dataset.col).length}</span></h6>`);
+                k_store.data.forEach(t => {
+                    const card = document.createElement('div');
+                    card.className = 'kanban-card';
+                    card.textContent = t.title;
+                    card.draggable = true;
+                    card.dataset.id = t.id;
+                    $(`#k_${t.col.toLowerCase().replace(/ /g,'')}`).appendChild(card);
+                });
+                Storage.set(K_KEY, k_store.data);
+            };
+            $$('.kanban-col').forEach(col => {
+                col.ondragover = e => e.preventDefault();
+                col.ondrop = e => {
+                    e.preventDefault();
+                    if(drag_el) {
+                        const task = k_store.data.find(t => t.id === drag_el.dataset.id);
+                        task.col = col.dataset.col;
+                        k_render();
+                        drag_el = null;
+                    }
+                };
+            });
+            document.addEventListener('dragstart', e => { if(e.target.classList.contains('kanban-card')) drag_el = e.target; });
+            k_render();
+        },
+        contracts: () => {
+             $('#ct_validate').onclick = () => {
+                try {
+                    const json = JSON.parse($('#ct_json').value);
+                    $('#ct_preview').innerHTML = '<div class="alert alert-success">JSON Válido</div>';
+                } catch(e) {
+                    $('#ct_preview').innerHTML = `<div class="alert alert-danger">${e.message}</div>`;
+                }
+             };
+        },
+        settings: () => {
+            $('#s_clear').onclick = () => {
+                if(confirm('¿Limpiar todo el LocalStorage? Se perderán todos los datos.')) {
+                    localStorage.clear();
+                    location.reload();
+                }
+            }
+        }
+    };
+
+    // Lazy load modules on activation
+    const loaded_modules = new Set();
+    const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+            if (mutation.attributeName === 'class') {
+                const sectionId = mutation.target.id;
+                if (mutation.target.classList.contains('active') && !loaded_modules.has(sectionId)) {
+                    if (init_map[sectionId]) {
+                        init_map[sectionId]();
+                        loaded_modules.add(sectionId);
+                    }
+                }
+            }
+        }
+    });
+    $$('.section').forEach(s => observer.observe(s, {attributes: true}));
+
+    // Initial load for default section
+    const initial_id = location.hash.replace('#','') || 'glossary';
+    if(init_map[initial_id]) {
+        init_map[initial_id]();
+        loaded_modules.add(initial_id);
+    }
+});
+</script>
 </body>
 </html>
