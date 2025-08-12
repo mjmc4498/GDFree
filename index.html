@@ -1441,5 +1441,90 @@
   shRender();
 
   </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /************* Core App & Router *************/
+  const $ = (s)=>document.querySelector(s);
+  const $$ = (s)=>document.querySelectorAll(s);
+  const Toast = (m, d=1800)=>{
+    const toastEl = $('#toast');
+    if (!toastEl) return;
+    $('#toastMsg').textContent=m;
+    const toast = bootstrap.Toast.getOrCreateInstance(toastEl,{delay:d});
+    toast.show();
+  };
+  const Storage = {
+    get: (k, def) => { try{ return JSON.parse(localStorage.getItem(k)) ?? def; }catch(e){ return def; } },
+    set: (k, v) => localStorage.setItem(k, JSON.stringify(v))
+  };
+
+  function showSection(hash) {
+    const sectionId = hash.replace('#', '') || 'glossary';
+    $$('.section').forEach(s => s.classList.remove('active'));
+    const currentSection = $('#' + sectionId);
+    if(currentSection) {
+        currentSection.classList.add('active');
+    } else {
+        $('#glossary').classList.add('active'); // Fallback to glossary
+    }
+
+    $$('#menu .list-group-item').forEach(a => {
+      a.classList.toggle('active-item', a.dataset.section === sectionId);
+    });
+    document.body.scrollTop = document.documentElement.scrollTop = 0;
+  }
+
+  window.addEventListener('hashchange', () => showSection(location.hash));
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Initial route
+    showSection(location.hash);
+
+    // Menu search
+    $('#menuSearch').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      $$('#menu .list-group-item').forEach(a => {
+        a.style.display = a.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+
+    // Settings: Clear Storage
+    $('#s_clear').addEventListener('click', () => {
+        if (confirm('¿Está seguro de que desea eliminar todos los datos del almacenamiento local? Esta acción no se puede deshacer.')) {
+            localStorage.clear();
+            Toast('Almacenamiento local limpiado. Recargue la página.');
+            setTimeout(()=>location.reload(), 1500);
+        }
+    });
+
+    // Global import/export
+    $('#btnExportAll').addEventListener('click', () => {
+        const allData = {};
+        Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('gl_') || key.startsWith('dc_') || key.startsWith('dq_') || key.startsWith('p_') || key.startsWith('raci_') || key.startsWith('a_') || key.startsWith('dp_') || key.startsWith('rt_') || key.startsWith('k_') || key.startsWith('sh_') || key.startsWith('dm_')) {
+              allData[key] = Storage.get(key, null);
+            }
+        });
+        const blob=new Blob([JSON.stringify(allData,null,2)],{type:'application/json'});
+        const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`govsuite_backup_${new Date().toISOString().slice(0,10)}.json`; a.click();
+        Toast('Exportando todos los datos.');
+    });
+
+    $('#importAll').addEventListener('change', (e) => {
+        const f=e.target.files[0]; if(!f) return; const r=new FileReader();
+        r.onload=(ev)=>{ try{
+          const data=JSON.parse(ev.target.result);
+          if (confirm('Esto sobreescribirá todos los datos existentes. ¿Continuar?')) {
+              Object.entries(data).forEach(([key, value]) => {
+                  Storage.set(key, value);
+              });
+              Toast('Datos importados. Recargando...');
+              setTimeout(() => location.reload(), 1500);
+          }
+        }catch(err){ alert('No se pudo importar: '+err.message); } };
+        r.readAsText(f); e.target.value='';
+    });
+  });
+</script>
 </body>
 </html>
