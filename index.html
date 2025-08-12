@@ -925,5 +925,315 @@
   dqRender();
 
   </script>
+<script>
+  /************* Builder (Reglas) *************/
+  const B_KEY='b_rules';
+  const bStore = { rules: Storage.get(B_KEY, []) };
+  function bSave(){ Storage.set(B_KEY,bStore.rules); }
+  function bRender(){
+    $('#b_tbl tbody').innerHTML = bStore.rules.map((r,i)=>`
+      <tr>
+        <td>${r.name||`${r.type} ${r.field||''}`}</td>
+        <td><span class="badge text-bg-primary">${r.domain||'-'}</span></td>
+        <td>${r.dataset||'-'}</td>
+        <td>${r.field||'-'}</td>
+        <td><span class="badge ${r.severity==='Crítica'?'text-bg-danger':r.severity==='Alta'?'text-bg-warning':r.severity==='Media'?'text-bg-info':'text-bg-secondary'}">${r.severity}</span></td>
+        <td>${r.threshold||95}%</td>
+        <td class="text-end">
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-light" onclick="bDel(${i})"><i class="bi bi-trash"></i></button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+    bSave();
+  }
+  window.bDel = (i)=>{ bStore.rules.splice(i,1); bRender(); Toast('Regla eliminada'); };
+  $('#b_add').addEventListener('click', ()=>{
+    const rule = {
+      name: `${$('#b_type').value} ${$('#b_field').value||''}`.trim(),
+      domain: $('#c_dom_in').value || 'General',
+      dataset: $('#b_ds').value.trim(),
+      field: $('#b_field').value.trim(),
+      type: $('#b_type').value,
+      expr: $('#b_expr').value.trim(),
+      severity: $('#b_sev').value,
+      threshold: +$('#b_thr').value || 95
+    };
+    bStore.rules.push(rule); bRender(); Toast('Regla añadida'); bootstrap.Modal.getInstance('#mdlBuilder')?.hide();
+  });
+  $('#b_export').addEventListener('click', ()=>{
+    const blob=new Blob([JSON.stringify(bStore.rules,null,2)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='builder_rules.json'; a.click();
+  });
+  $('#b_import').addEventListener('change', (e)=>{
+    const f=e.target.files[0]; if(!f) return; const r=new FileReader();
+    r.onload=(ev)=>{ try{ const arr=JSON.parse(ev.target.result); if(!Array.isArray(arr)) throw new Error('Formato inválido'); bStore.rules=arr; bRender(); Toast('Importado'); }catch(err){ alert('No se pudo importar: '+err.message);} };
+    r.readAsText(f); e.target.value='';
+  });
+  bRender();
+
+  /************* Policies *************/
+  const P_KEY='p_items';
+  const pSeed=[{id:uuid(),title:'Política de Clasificación',status:'Vigente',version:2,content:'Niveles: Público, Interno, Confidencial, Alto Secreto.',history:['v1 creado','v2 ajustes'],updatedAt:new Date().toISOString()}];
+  const pStore={ items: Storage.get(P_KEY, pSeed), sel:null };
+  function pSave(){ Storage.set(P_KEY,pStore.items); }
+  function pRenderList(){
+    const q=$('#p_q').value?.toLowerCase()||'';
+    $('#p_list').innerHTML = pStore.items
+      .filter(p=>p.title.toLowerCase().includes(q))
+      .map(p=>`<button class="list-group-item list-group-item-action bg-transparent text-light text-start" onclick="pOpen('${p.id}')">
+        <div class="d-flex justify-content-between"><span>${p.title}</span>
+        <span class="badge ${p.status==='Vigente'?'text-bg-success':p.status==='Borrador'?'text-bg-info':'text-bg-secondary'}">${p.status}</span></div>
+        <small class="text-secondary">v${p.version} · ${fmtDate(p.updatedAt)}</small>
+      </button>`).join('');
+  }
+  window.pOpen = (id)=>{
+    const p = pStore.items.find(x=>x.id===id); pStore.sel=p;
+    $('#p_title').textContent=p.title;
+    $('#p_meta').textContent=`Estado: ${p.status} · v${p.version}`;
+    $('#p_content').textContent=p.content;
+    $('#p_diff').textContent=(p.history||[]).map(h=>'• '+h).join('\n');
+  };
+  $('#p_new').addEventListener('click', ()=>{
+    const p={id:uuid(),title:'Nueva Política',status:'Borrador',version:1,content:'...',history:['creado'],updatedAt:new Date().toISOString()};
+    pStore.items.unshift(p); pSave(); pRenderList(); Toast('Creada');
+  });
+  $('#p_q').addEventListener('input', pRenderList);
+  pRenderList();
+
+  /************* RACI *************/
+  const R_KEY='raci_rows';
+  const rSeed=[{process:'Alta de Producto de Datos',artifact:'Contrato de Datos',R:'Steward',A:'Data Owner',C:'Seguridad',I:'Arquitectura'}];
+  const rStore={ rows: Storage.get(R_KEY, rSeed) };
+  function rSave(){ Storage.set(R_KEY,rStore.rows); }
+  function rRender(){
+    $('#raci_tbl tbody').innerHTML = rStore.rows.map((r,i)=>`
+      <tr>
+        <td contenteditable oninput="rEdit(${i},'process',this.innerText)">${r.process}</td>
+        <td contenteditable oninput="rEdit(${i},'artifact',this.innerText)">${r.artifact}</td>
+        <td contenteditable oninput="rEdit(${i},'R',this.innerText)">${r.R}</td>
+        <td contenteditable oninput="rEdit(${i},'A',this.innerText)">${r.A}</td>
+        <td contenteditable oninput="rEdit(${i},'C',this.innerText)">${r.C}</td>
+        <td contenteditable oninput="rEdit(${i},'I',this.innerText)">${r.I}</td>
+      </tr>`).join('');
+  }
+  window.rEdit = (i,k,v)=>{
+    const row=rStore.rows[i]; row[k]=v.trim();
+    if(k==='A' && (row.A.split(',').length>1)) Toast('Solo un “A” por fila');
+    rSave();
+  };
+  $('#raci_export').addEventListener('click', ()=>{
+    const head=['Proceso','Artefacto','R','A','C','I'];
+    const rows=rStore.rows.map(r=>[r.process,r.artifact,r.R,r.A,r.C,r.I].map(x=>`"${(x||'').replaceAll('"','""')}"`).join(','));
+    const blob=new Blob([head.join(',')+'\n'+rows.join('\n')],{type:'text/csv;charset=utf-8;'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='raci.csv'; a.click();
+  });
+  rRender();
+
+  /************* Access Requests *************/
+  const A_KEY='a_rows';
+  const aSeed=[{id:1001,user:'mmogrovejo',resource:'bq:clientes',state:'Pendiente',etaMins:90},{id:1002,user:'analyst01',resource:'s3://datos/polizas',state:'Aprobado',etaMins:0}];
+  const aStore={ rows: Storage.get(A_KEY, aSeed) };
+  function aSave(){ Storage.set(A_KEY,aStore.rows); }
+  function aCountdown(mins){ if(mins<=0) return '—'; const d=new Date(Date.now()+mins*60000); return d.toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'}); }
+  function aRenderForm(){
+    $('#a_form').innerHTML = `
+      <div class="mb-2"><label class="form-label">Usuario</label><input id="a_user" class="form-control" value="mmogrovejo"></div>
+      <div class="mb-2"><label class="form-label">Recurso</label><input id="a_res" class="form-control" placeholder="bq:clientes"></div>
+      <div class="mb-2"><label class="form-label">Justificación</label><textarea id="a_why" class="form-control"></textarea></div>
+      <button id="a_submit" class="btn btn-primary">Enviar</button>`;
+    $('#a_submit').onclick = ()=>{
+      const id=(Math.max(...aStore.rows.map(r=>r.id))+1)||1001;
+      aStore.rows.unshift({id,user:$('#a_user').value,resource:$('#a_res').value,state:'Pendiente',etaMins:120});
+      aSave(); aRenderTable(); Toast('Solicitud enviada');
+    };
+  }
+  function aRenderTable(){
+    $('#a_tbl tbody').innerHTML = aStore.rows.map(r=>`
+      <tr>
+        <td>${r.id}</td><td>${r.user}</td><td>${r.resource}</td>
+        <td><span class="badge ${r.state==='Aprobado'?'text-bg-success':r.state==='Rechazado'?'text-bg-danger':'text-bg-secondary'}">${r.state}</span></td>
+        <td>${aCountdown(r.etaMins)}</td>
+        <td class="text-end">
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-success" onclick="aApprove(${r.id})"><i class="bi bi-check2"></i></button>
+            <button class="btn btn-outline-danger" onclick="aReject(${r.id})"><i class="bi bi-x"></i></button>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+  window.aApprove=(id)=>{ const r=aStore.rows.find(x=>x.id===id); if(!r) return; r.state='Aprobado'; r.etaMins=0; aSave(); aRenderTable(); Toast('Aprobado'); };
+  window.aReject =(id)=>{ const r=aStore.rows.find(x=>x.id===id); if(!r) return; r.state='Rechazado'; r.etaMins=0; aSave(); aRenderTable(); Toast('Rechazado'); };
+  $('#a_new').addEventListener('click', aRenderForm);
+  aRenderForm(); aRenderTable();
+
+  /************* DPIA *************/
+  const DP_KEY='dp_item';
+  const dpSeed={ purpose:'Analítica de clientes', pii:true, transfers:false, retentionDays:365, encryption:true };
+  const dpStore={ item: Storage.get(DP_KEY, dpSeed) };
+  function dpSave(){ Storage.set(DP_KEY, dpStore.item); }
+  function dpRender(){
+    $('#dp_form').innerHTML = `
+      <div class="mb-2"><label class="form-label">Propósito</label><input id="dp_purpose" class="form-control" value="${dpStore.item.purpose}"></div>
+      <div class="mb-2 form-check form-switch"><input id="dp_pii" class="form-check-input" type="checkbox" ${dpStore.item.pii?'checked':''}><label class="form-check-label">Usa PII</label></div>
+      <div class="mb-2 form-check form-switch"><input id="dp_trans" class="form-check-input" type="checkbox" ${dpStore.item.transfers?'checked':''}><label class="form-check-label">Transferencia internacional</label></div>
+      <div class="mb-2"><label class="form-label">Retención (días)</label><input id="dp_ret" type="number" class="form-control" value="${dpStore.item.retentionDays}"></div>
+      <div class="mb-2 form-check form-switch"><input id="dp_enc" class="form-check-input" type="checkbox" ${dpStore.item.encryption?'checked':''}><label class="form-check-label">Cifrado en reposo</label></div>
+      <button id="dp_calc" class="btn btn-primary">Calcular riesgo</button>`;
+    $('#dp_calc').onclick = dpCalc;
+    dpCalc();
+  }
+  function dpCalc(){
+    const pii = $('#dp_pii').checked?30:0;
+    const transfers = $('#dp_trans').checked?30:0;
+    const retention = Math.min(40, Math.max(0, (parseInt($('#dp_ret').value)||0)/30 ));
+    const encryption = $('#dp_enc').checked ? -20 : 0;
+    const score = Math.max(0, Math.min(100, 10 + pii + transfers + retention + encryption));
+    $('#dp_score').textContent = Math.round(score);
+    $('#dp_badge').innerHTML = `<span class="badge ${score>70?'text-bg-danger':score>40?'text-bg-warning':'text-bg-success'}">${score>70?'Alto':score>40?'Medio':'Bajo'}</span>`;
+    dpStore.item = { purpose: $('#dp_purpose').value, pii: $('#dp_pii').checked, transfers: $('#dp_trans').checked, retentionDays: +$('#dp_ret').value, encryption: $('#dp_enc').checked };
+    dpSave();
+  }
+  $('#dp_new').addEventListener('click', ()=>{ dpStore.item=dpSeed; dpSave(); dpRender(); Toast('DPIA reiniciado'); });
+  dpRender();
+
+  /************* Retention *************/
+  const RT_KEY='rt_rows';
+  const rtSeed=[ {domain:'Personas', table:'clientes', action:'retener', date:addDays(5)}, {domain:'Polizas', table:'polizas', action:'eliminar', date:addDays(14)} ];
+  const rtStore={ rows: Storage.get(RT_KEY, rtSeed) };
+  function addDays(n){ const d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
+  function rtSave(){ Storage.set(RT_KEY, rtStore.rows); }
+  function rtRender(){
+    $('#rt_tbl tbody').innerHTML = rtStore.rows.map(r=>`
+      <tr><td>${r.domain}</td><td>${r.table}</td><td><span class="badge ${r.action==='eliminar'?'text-bg-danger':'text-bg-secondary'}">${r.action}</span></td><td>${r.date}</td></tr>`).join('');
+    // calendar current month
+    const today=new Date(); const first=new Date(today.getFullYear(), today.getMonth(),1); const last=new Date(today.getFullYear(), today.getMonth()+1,0);
+    const cal=$('#rt_calendar'); cal.innerHTML='';
+    const firstWeekday=(first.getDay()+6)%7; // lunes=0
+    for(let i=0;i<firstWeekday;i++){ cal.appendChild(Object.assign(document.createElement('div'),{className:'col'})); }
+    for(let d=1; d<=last.getDate(); d++){
+      const cell=document.createElement('div'); cell.className='col';
+      const card=document.createElement('div'); card.className='p-2 border rounded'; card.innerHTML=`<div class="fw-bold">${d}</div>`;
+      const f = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      rtStore.rows.filter(x=>x.date===f).forEach(x=>{ const chip=document.createElement('div'); chip.className='chip mt-1'; chip.textContent = `${x.action}: ${x.table}`; card.appendChild(chip); });
+      cell.appendChild(card); cal.appendChild(cell);
+    }
+  }
+  $('#rt_new').addEventListener('click', ()=>{
+    const entry = {domain:'General', table:'tabla_'+(rtStore.rows.length+1), action: Math.random()>0.5?'retener':'eliminar', date:addDays(7)};
+    rtStore.rows.push(entry); rtSave(); rtRender(); Toast('Registro añadido');
+  });
+  rtRender();
+
+  /************* Kanban *************/
+  const K_KEY='k_cards';
+  const kSeed=[ {id:1,title:'Duplicados en DNI', col:'Backlog'}, {id:2,title:'Formato de placa inválida', col:'En Progreso'}, {id:3,title:'Dataset sin owner', col:'Backlog'} ];
+  const kStore={ cards: Storage.get(K_KEY, kSeed) };
+  function kSave(){ Storage.set(K_KEY,kStore.cards); }
+  function kCounts(){ const b=kStore.cards.filter(c=>c.col==='Backlog').length; const p=kStore.cards.filter(c=>c.col==='En Progreso').length; const r=kStore.cards.filter(c=>c.col==='En Revisión').length; const d=kStore.cards.filter(c=>c.col==='Hecho').length; $('#k_b_count').textContent=b; $('#k_p_count').textContent=p; $('#k_r_count').textContent=r; $('#k_d_count').textContent=d; }
+  function kRender(){
+    ['k_backlog','k_progress','k_review','k_done'].forEach(id=> $('#'+id).querySelectorAll('.draggable').forEach(e=>e.remove()));
+    kStore.cards.forEach(c=>{
+      const el=document.createElement('div'); el.className='draggable p-2 mt-2 border rounded'; el.draggable=true; el.dataset.id=c.id; el.textContent=c.title;
+      el.addEventListener('dragstart',e=> e.dataTransfer.setData('text/plain', c.id));
+      const col = c.col==='Backlog'?'k_backlog':c.col==='En Progreso'?'k_progress':c.col==='En Revisión'?'k_review':'k_done';
+      $('#'+col).appendChild(el);
+    });
+    kCounts(); kSave();
+  }
+  ['k_backlog','k_progress','k_review','k_done'].forEach(id=>{
+    const col=$('#'+id);
+    col.addEventListener('dragover',e=>e.preventDefault());
+    col.addEventListener('drop',e=>{ e.preventDefault(); const idc=+e.dataTransfer.getData('text/plain'); const card=kStore.cards.find(x=>x.id===idc); card.col = col.dataset.col; kRender(); });
+  });
+  $('#k_new').addEventListener('click', ()=>{
+    const id=(Math.max(0,...kStore.cards.map(c=>c.id))+1)||1;
+    kStore.cards.push({id,title:'Nueva incidencia '+id,col:'Backlog'}); kRender(); Toast('Incidencia creada');
+  });
+  kRender();
+
+  /************* Contracts *************/
+  function ctPreview(obj){
+    return `<h6>${obj.name||'sin nombre'}</h6>
+      <div><strong>Schema</strong><ul>${Object.entries(obj.schema||{}).map(([k,v])=>`<li>${k}: ${v}</li>`).join('')}</ul></div>
+      <div><strong>SLAs</strong><ul>${Object.entries(obj.slas||{}).map(([k,v])=>`<li>${k}: ${v}</li>`).join('')}</ul></div>`;
+  }
+  $('#ct_validate').addEventListener('click', ()=>{
+    try{
+      const obj=JSON.parse($('#ct_json').value);
+      const ok = obj.name && obj.schema && typeof obj.schema==='object' && obj.slas;
+      $('#ct_preview').innerHTML = ok? ctPreview(obj) : '<span class="text-danger">JSON inválido</span>';
+      Storage.set('ct_last', obj);
+      Toast(ok?'Contrato validado':'Error de validación');
+    }catch(err){ $('#ct_preview').innerHTML = `<span class="text-danger">${err.message}</span>`; Toast('JSON inválido'); }
+  });
+  const lastCT = Storage.get('ct_last', null); if(lastCT){ $('#ct_json').value = JSON.stringify(lastCT,null,2); $('#ct_preview').innerHTML = ctPreview(lastCT); }
+
+  /************* Domains Map *************/
+  const DM_KEY='dm_items';
+  const dmSeed=[ {name:'Personas', kpis:{uso:87, calidad:92, frescura:95}, products:['clientes','contactabilidad']}, {name:'Seguros', kpis:{uso:76, calidad:89, frescura:88}, products:['polizas','coberturas']}, {name:'Siniestros', kpis:{uso:65, calidad:81, frescura:90}, products:['siniestros','pagos']} ];
+  const dmStore={ items: Storage.get(DM_KEY, dmSeed) };
+  function dmSave(){ Storage.set(DM_KEY, dmStore.items); }
+  function dmRender(){ $('#dm_grid').innerHTML = dmStore.items.map(d=>`
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <h5 class="mb-1">${d.name}</h5>
+            <div>
+              <span class="badge text-bg-success me-1">Q:${d.kpis.calidad}%</span>
+              <span class="badge text-bg-info me-1">U:${d.kpis.uso}%</span>
+              <span class="badge text-bg-warning">F:${d.kpis.frescura}%</span>
+            </div>
+          </div>
+          <div class="mt-2 d-flex gap-1 flex-wrap">${d.products.map(p=>`<span class="chip">${p}</span>`).join('')}</div>
+        </div>
+      </div>
+    </div>`).join(''); }
+  $('#dm_refresh').addEventListener('click', ()=>{ dmStore.items.forEach(d=>{ d.kpis.uso = Math.min(100,Math.max(0,d.kpis.uso + (Math.random()*10-5)|0)); d.kpis.calidad = Math.min(100,Math.max(0,d.kpis.calidad + (Math.random()*8-4)|0)); d.kpis.frescura = Math.min(100,Math.max(0,d.kpis.frescura + (Math.random()*8-4)|0)); }); dmSave(); dmRender(); Toast('KPIs actualizados'); });
+  dmRender();
+
+  /************* Training *************/
+  const TR_KEY='tr_store';
+  const trSeed={ courses:[{id:1,title:'Fundamentos de Gobierno de Datos',progress:40},{id:2,title:'Calidad de Datos 101',progress:10}], quiz:[{q:'¿Quién define el significado del dato?',a:['Data Owner','Data Steward','Data Enabler'],c:1},{q:'¿Qué mide completitud?',a:['Duplicados','Valores nulos','Formato'],c:1}] };
+  const trStore=Storage.get(TR_KEY,trSeed);
+  function trSave(){ Storage.set(TR_KEY,trStore); }
+  function trRender(){
+    $('#tr_courses').innerHTML = trStore.courses.map(c=>`
+      <div class="mb-3">
+        <div class="d-flex justify-content-between"><div>${c.title}</div><div>${c.progress}%</div></div>
+        <div class="progress"><div class="progress-bar" style="width:${c.progress}%"></div></div>
+      </div>`).join('');
+    $('#tr_quiz').innerHTML = trStore.quiz.map((q,i)=>`
+      <div class="mb-3">
+        <div class="fw-semibold">${i+1}. ${q.q}</div>
+        ${q.a.map((opt,ix)=>`
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="q${i}" value="${ix}" id="q${i}_${ix}">
+            <label class="form-check-label" for="q${i}_${ix}">${opt}</label>
+          </div>`).join('')}
+      </div>`).join('') + `<button class="btn btn-primary" id="tr_submit">Enviar</button>`;
+    $('#tr_submit').onclick = ()=>{ let score=0; trStore.quiz.forEach((q,i)=>{ const v=document.querySelector(\`input[name="q${i}"]:checked\`); if(v && +v.value===q.c) score++; }); Toast(\`Puntaje: ${score}/${trStore.quiz.length}\`); };
+  }
+  $('#tr_start').addEventListener('click', ()=>{ trStore.courses.forEach(c=> c.progress = Math.min(100, c.progress + 10)); trSave(); trRender(); Toast('Quiz iniciado'); });
+  trRender();
+
+  /************* Sharing *************/
+  const SH_KEY='sh_rows';
+  const shSeed=[ {name:'Acuerdo Personas↔Finanzas', parties:['Personas','Finanzas'], conf:'Confidencial', validUntil:addDays(30), state:'Vigente'}, {name:'Acuerdo Seguros↔Siniestros', parties:['Seguros','Siniestros'], conf:'Interno', validUntil:addDays(10), state:'Por vencer'} ];
+  const shStore={ rows: Storage.get(SH_KEY, shSeed) };
+  function shSave(){ Storage.set(SH_KEY, shStore.rows); }
+  function shRender(){ $('#sh_tbl tbody').innerHTML = shStore.rows.map(r=>`
+    <tr>
+      <td>${r.name}</td>
+      <td>${r.parties.join(' & ')}</td>
+      <td><span class="badge ${r.conf==='Confidencial'?'text-bg-warning':'text-bg-secondary'}">${r.conf}</span></td>
+      <td>${r.validUntil}</td>
+      <td><span class="badge ${r.state==='Vigente'?'text-bg-success':r.state==='Vencido'?'text-bg-danger':'text-bg-warning'}">${r.state}</span></td>
+    </tr>`).join(''); }
+  $('#sh_new').addEventListener('click', ()=>{ shStore.rows.unshift({name:'Nuevo acuerdo '+(shStore.rows.length+1), parties:['Dom1','Dom2'], conf:'Interno', validUntil:addDays(20), state:'Vigente'}); shSave(); shRender(); Toast('Acuerdo creado'); });
+  shRender();
+
+  </script>
 </body>
 </html>
